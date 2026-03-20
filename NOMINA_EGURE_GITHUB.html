@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NÓMINA — Multiservicios Egure</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --azul:#1B3A6B;--azul-m:#2E6DB4;--azul-bg:#EBF3FB;
+  --verde:#16A34A;--verde-bg:#DCFCE7;
+  --rojo:#DC2626;--rojo-bg:#FEE2E2;
+  --amarillo:#D97706;--amarillo-bg:#FEF9C3;
+  --morado:#7C3AED;--morado-bg:#EDE9FE;
+  --fondo:#F0F6FF;--blanco:#FFFFFF;
+  --gris:#64748B;--borde:#CBD5E1;--texto:#0F172A;
+  --sidebar:230px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--fondo);color:var(--texto);display:flex;min-height:100vh;font-size:14px;}
+
+.sidebar{width:var(--sidebar);background:var(--azul);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;box-shadow:4px 0 20px rgba(27,58,107,0.2);}
+.logo{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo-marca{font-weight:800;font-size:17px;color:#fff;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px;}
+.logo-sub2{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.logo-ok{font-size:10px;margin-top:6px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:5px;}
+.dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.nav{flex:1;padding:14px 0;overflow-y:auto;}
+.nav-sec{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;padding:12px 20px 5px;font-weight:700;}
+.ni{display:flex;align-items:center;gap:10px;padding:11px 20px;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;font-size:13px;border-left:3px solid transparent;}
+.ni:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.ni.active{background:rgba(255,255,255,0.13);color:#fff;border-left-color:#38BDF8;font-weight:600;}
+.sf{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.08);font-size:10px;color:rgba(255,255,255,0.25);}
+
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;}
+.topbar{background:var(--blanco);border-bottom:1px solid var(--borde);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+.topbar-title{font-weight:800;font-size:17px;color:var(--azul);}
+.topbar-r{display:flex;align-items:center;gap:10px;}
+.fecha-chip{font-size:12px;color:var(--gris);background:var(--fondo);padding:5px 12px;border-radius:6px;border:1px solid var(--borde);}
+.content{padding:24px 28px;flex:1;}
+.page{display:none;}.page.active{display:block;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.cg4{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;} 
+.cg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.card{background:var(--blanco);border-radius:12px;padding:18px 20px;border:1px solid var(--borde);border-top:4px solid var(--azul-m);box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.card.verde{border-top-color:var(--verde);}.card.rojo{border-top-color:var(--rojo);}.card.morado{border-top-color:var(--morado);}.card.amarillo{border-top-color:var(--amarillo);}
+.card-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gris);font-weight:700;margin-bottom:8px;}
+.card-val{font-size:26px;font-weight:800;color:var(--azul);line-height:1;font-family:"Courier New",monospace;}
+.card.verde .card-val{color:var(--verde);}.card.rojo .card-val{color:var(--rojo);}.card.morado .card-val{color:var(--morado);}.card.amarillo .card-val{color:var(--amarillo);}
+.card-sub{font-size:12px;color:var(--gris);margin-top:5px;}
+
+/* TABLA */
+.tw{background:var(--blanco);border-radius:12px;border:1px solid var(--borde);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);margin-bottom:18px;}
+.th{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--borde);gap:12px;flex-wrap:wrap;}
+.tt{font-weight:700;font-size:14px;color:var(--azul);}
+input,select,textarea{border:1px solid var(--borde);border-radius:7px;padding:7px 11px;font-family:inherit;font-size:13px;color:var(--texto);background:var(--blanco);outline:none;transition:border-color 0.15s,box-shadow 0.15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--azul-m);box-shadow:0 0 0 3px rgba(46,109,180,0.12);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:#F8FAFC;padding:10px 12px;text-align:left;font-weight:700;color:var(--gris);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--borde);white-space:nowrap;}
+tbody tr{border-bottom:1px solid #F1F5F9;transition:background 0.1s;}
+tbody tr:hover{background:var(--azul-bg);}
+tbody td{padding:9px 12px;vertical-align:middle;}
+tfoot td{padding:11px 12px;font-weight:800;background:#EBF3FB;border-top:2px solid var(--azul-m);}
+.mono{font-family:"Courier New",monospace;font-size:12px;font-weight:600;}
+
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-primary{background:var(--azul);color:#fff;}.btn-primary:hover{background:var(--azul-m);}
+.btn-success{background:var(--verde);color:#fff;}.btn-success:hover{background:#15803d;}
+.btn-outline{background:transparent;color:var(--azul);border:1px solid var(--borde);}.btn-outline:hover{background:var(--azul-bg);}
+.btn-danger{background:var(--rojo);color:#fff;}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn-xs{padding:3px 8px;font-size:11px;}
+
+/* FORM */
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.fgroup{display:flex;flex-direction:column;gap:4px;}
+.fgroup.full{grid-column:1/-1;}
+.lbl{font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.5px;}
+.fgroup input,.fgroup select{width:100%;}
+
+/* SEMANA NAV */
+.semana-nav{display:flex;align-items:center;gap:12px;background:var(--blanco);border:1px solid var(--borde);border-radius:10px;padding:12px 18px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.sem-info{flex:1;text-align:center;}
+.sem-label{font-weight:800;font-size:15px;color:var(--azul);}
+.sem-dates{font-size:12px;color:var(--gris);margin-top:2px;}
+
+/* TICKET ROW */
+.ticket-row{display:grid;grid-template-columns:80px 70px 130px 1fr 95px 110px 75px 70px 36px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid #F8FAFC;}
+.ticket-row input{padding:6px 9px;font-size:12px;}
+.ticket-row select{padding:6px 9px;font-size:12px;}
+
+/* MECANICO CARD */
+.mec-card{background:var(--blanco);border:1px solid var(--borde);border-radius:10px;padding:0;overflow:hidden;margin-bottom:14px;}
+.mec-header{background:var(--azul);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.mec-nombre{font-weight:800;font-size:15px;}
+.mec-periodo{font-size:11px;opacity:0.7;margin-top:2px;}
+.mec-body{padding:18px;}
+
+/* CALCULO BOX */
+.calc-box{background:var(--azul-bg);border:1px solid #BDD7EE;border-radius:8px;padding:14px 16px;}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(46,109,180,0.15);font-size:13px;}
+.calc-row:last-child{border-bottom:none;}
+.calc-lbl{color:var(--gris);}
+.calc-val{font-family:"Courier New",monospace;font-weight:700;font-size:13px;}
+.calc-total{display:flex;justify-content:space-between;align-items:center;background:var(--azul);color:#fff;padding:12px 16px;border-radius:8px;margin-top:10px;font-weight:800;font-size:16px;}
+.calc-total .mono{font-size:18px;color:#fff;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.b-verde{background:var(--verde-bg);color:var(--verde);}
+.b-rojo{background:var(--rojo-bg);color:var(--rojo);}
+.b-azul{background:var(--azul-bg);color:var(--azul);}
+.b-amarillo{background:var(--amarillo-bg);color:var(--amarillo);}
+.chip{font-size:10px;font-weight:700;background:var(--azul-bg);color:var(--azul);padding:2px 8px;border-radius:4px;}
+
+/* RESUMEN NOMINA */
+.nom-resumen{background:var(--blanco);border-radius:12px;border:1px solid var(--borde);overflow:hidden;margin-bottom:18px;}
+.nom-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--borde);}
+.nom-row.head{background:#F8FAFC;}
+.nom-row div{padding:10px 12px;font-size:12px;}
+.nom-row.head div{font-weight:700;color:var(--gris);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;}
+.nom-row.total-row div{background:var(--azul);color:#fff;font-weight:800;border-bottom:none;font-family:"Courier New",monospace;}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.overlay.open{display:flex;}
+.modal{background:var(--blanco);border-radius:14px;padding:24px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(15,23,42,0.25);animation:slideUp 0.2s ease;}
+.modal-lg{width:700px;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-weight:800;font-size:16px;color:var(--azul);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--borde);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;padding-top:12px;border-top:1px solid var(--borde);}
+
+/* PRINT */
+.print-header{display:none;}
+@media print{
+  .sidebar,.topbar,.btn,.overlay,.toast,.semana-nav .btn{display:none!important;}
+  .main{margin-left:0!important;}
+  .content{padding:10px!important;}
+  body{background:#fff!important;font-size:12px!important;}
+  .print-header{display:block;text-align:center;margin-bottom:16px;}
+  .print-header h1{font-size:18px;color:#000;}
+  .print-header p{font-size:12px;color:#666;}
+  .mec-card{break-inside:avoid;margin-bottom:20px;}
+}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--azul);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;transform:translateY(80px);opacity:0;transition:all 0.3s;box-shadow:0 8px 24px rgba(27,58,107,0.3);max-width:400px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{background:var(--verde);}.toast.err{background:var(--rojo);}
+
+.empty{text-align:center;padding:36px;color:var(--gris);}
+.sec-title{font-weight:800;font-size:14px;color:var(--azul);margin-bottom:12px;}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ============================================================
+// RESUMEN DEL DÍA
+// ============================================================
+function mostrarResumenDia(){
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-dia-picker').value = hoy;
+  document.getElementById('modal-dia').style.display='block';
+  document.body.style.overflow='hidden';
+  cargarResumenDia(hoy);
+}
+
+function cerrarResumenDia(){
+  document.getElementById('modal-dia').style.display='none';
+  document.body.style.overflow='';
+}
+
+function cargarResumenDia(fecha){
+  if(!fecha) return;
+  const semKey = getSemana(semanaOffset).key;
+  const tks = DB.tickets[semKey]||{};
+  document.getElementById('modal-dia-fecha').textContent = 
+    new Date(fecha+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+
+  // Recopilar todos los tickets del día
+  let ventaTotal=0, comisionable=0, refacciones=0, comLlantas=0, numTickets=0;
+  const detalles = [];
+
+  Object.entries(tks).forEach(([mecId, tkList])=>{
+    const mec = DB.mecanicos.find(m=>m.id===mecId);
+    const nombre = mecId==='_refacciones' ? '📦 Refacciones' : (mec?.nombre || mecId.toUpperCase());
+    const color  = mec?.color  || '#1B3A6B';
+    tkList.filter(t=>t.fecha===fecha && !t._hist).forEach(t=>{
+      numTickets++;
+      const imp = t.importe||0;
+      const tipo = t.tipo||'servicio';
+      ventaTotal += imp;
+      if(tipo==='refaccion') refacciones+=imp;
+      else comisionable+=imp;
+      comLlantas += t.comLlanta||0;
+      detalles.push({nombre,color,tipo,...t});
+    });
+  });
+
+  // Cards
+  const cards = [
+    {lbl:'Venta Total del Día', val:$M(ventaTotal), color:'#16A34A', icon:'💰'},
+    {lbl:'Servicios (comisionable)', val:$M(comisionable), color:'#2E6DB4', icon:'🔧'},
+    {lbl:'Refacciones (sin comisión)', val:$M(refacciones), color:'#D97706', icon:'📦'},
+    {lbl:'Com. Llantas', val:$M(comLlantas), color:'#7C3AED', icon:'🔵'},
+    {lbl:'No. Tickets', val:numTickets, color:'#0891B2', icon:'🎫'},
+    {lbl:'Semana activa', val:getSemana(semanaOffset).label, color:'#64748B', icon:'📅'},
+  ];
+  document.getElementById('modal-dia-cards').innerHTML = cards.map(c=>`
+    <div style="border:1px solid #E2E8F0;border-radius:8px;padding:12px;border-top:3px solid ${c.color}">
+      <div style="font-size:10px;color:#64748B;font-weight:700;text-transform:uppercase;">${c.icon} ${c.lbl}</div>
+      <div style="font-family:Courier New,monospace;font-size:18px;font-weight:800;color:${c.color};margin-top:4px;">${c.val}</div>
+    </div>`).join('');
+
+  // Tabla detalle por mecánico
+  if(detalles.length===0){
+    document.getElementById('modal-dia-tabla').innerHTML=
+      '<div style="text-align:center;padding:24px;color:#94A3B8;font-size:14px;">Sin tickets capturados para este día</div>';
+    return;
+  }
+
+  const tipoBadge = t=>({
+    servicio:'<span style="background:#EBF3FB;color:#1B3A6B;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">🔧 Servicio</span>',
+    llantas: '<span style="background:#FEF9C3;color:#D97706;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">🔵 Llantas</span>',
+    refaccion:'<span style="background:#FEE2E2;color:#DC2626;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">📦 Refacción</span>',
+  }[t]||'');
+
+  document.getElementById('modal-dia-tabla').innerHTML=`
+    <div style="font-weight:700;font-size:13px;color:#1B3A6B;margin-bottom:10px;border-left:4px solid #1B3A6B;padding-left:8px;">
+      Detalle de tickets — ${numTickets} registros
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:#1B3A6B;color:#fff;">
+        <th style="padding:8px;text-align:left;">Mecánico</th>
+        <th style="padding:8px;text-align:left;">Ticket</th>
+        <th style="padding:8px;text-align:left;">Vehículo</th>
+        <th style="padding:8px;text-align:center;">Tipo</th>
+        <th style="padding:8px;text-align:right;">Importe</th>
+        <th style="padding:8px;text-align:right;">Com.Llanta</th>
+      </tr></thead>
+      <tbody>
+        ${detalles.map((t,i)=>`<tr style="background:${i%2?'#F8FAFF':'#fff'};border-bottom:1px solid #E2E8F0;">
+          <td style="padding:7px 8px;"><span style="font-weight:700;color:${t.color}">${t.nombre}</span></td>
+          <td style="padding:7px 8px;font-family:Courier New,monospace;">${t.ticket||'—'}</td>
+          <td style="padding:7px 8px;">${t.vehiculo||'—'}</td>
+          <td style="padding:7px 8px;text-align:center;">${tipoBadge(t.tipo||'servicio')}</td>
+          <td style="padding:7px 8px;text-align:right;font-family:Courier New,monospace;font-weight:700;">${$M(t.importe||0)}</td>
+          <td style="padding:7px 8px;text-align:right;font-family:Courier New,monospace;color:#D97706;">${t.comLlanta?$M(t.comLlanta):'—'}</td>
+        </tr>`).join('')}
+        <tr style="background:#EBF3FB;font-weight:800;border-top:2px solid #1B3A6B;">
+          <td colspan="4" style="padding:8px;text-align:right;">TOTAL DEL DÍA</td>
+          <td style="padding:8px;text-align:right;font-family:Courier New,monospace;font-size:14px;color:#16A34A;">${$M(ventaTotal)}</td>
+          <td style="padding:8px;text-align:right;font-family:Courier New,monospace;color:#D97706;">${$M(comLlantas)}</td>
+        </tr>
+      </tbody>
+    </table>`;
+}
+
+
+</script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-marca">💼 NÓMINA</div>
+    <div class="logo-sub">Multiservicios Egure</div>
+    <div class="logo-sub2">Siglo XXI · III Anillo</div>
+    <div class="logo-ok"><span class="dot"></span><span id="sg">Datos guardados</span></div>
+  </div>
+  <div class="nav">
+    <div class="nav-sec">General</div>
+    <div class="ni active" onclick="irA('dashboard',this)"><span>📊</span> Dashboard</div>
+    <div class="nav-sec">Nómina Semanal</div>
+    <div class="ni" onclick="irA('captura',this)"><span>🧾</span> Capturar Tickets</div>
+    <div class="ni" onclick="irA('nomina',this)"><span>💵</span> Calcular Nómina</div>
+    <div class="ni" onclick="irA('resumen',this)"><span>📋</span> Resumen Semana</div>
+    <div class="nav-sec">Personal</div>
+    <div class="ni" onclick="irA('mecanicos',this)"><span>👥</span> Personal</div>
+    <div class="nav-sec">Sistema</div>
+    <div class="ni" onclick="irA('respaldo',this)"><span>💾</span> Respaldo</div>
+  </div>
+  <div class="sf">v1.0 · Feb 2026</div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-r">
+      <div class="fecha-chip" id="fecha-chip"></div>
+      <button class="btn btn-outline btn-sm" onclick="cambiarSemana(-1)">‹ Semana ant.</button>
+      <div id="sem-chip" style="font-size:12px;font-weight:700;color:var(--azul);white-space:nowrap;"></div>
+      <button class="btn btn-outline btn-sm" onclick="cambiarSemana(1)">Siguiente ›</button>
+      <button class="btn btn-primary" onclick="irA('captura',null)">🧾 Capturar</button>
+      <button class="btn btn-sm" onclick="mostrarResumenDia()" style="background:#7C3AED;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;">📊 Resumen del día</button>
+    <label style="display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-weight:700;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;">
+        📂 Cargar JSON
+        <input type="file" accept=".json" style="display:none;" onchange="restaurarJSON(this)">
+      </label>
+      <button class="btn btn-success btn-sm" onclick="exportarNominaExcel()">📊 Excel Nómina</button>
+      <button class="btn btn-success btn-sm" onclick="exportarNominaPDF()">📄 PDF Nómina</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="cg4" id="dash-cards"></div>
+      <div class="cg2">
+        <div>
+          <div class="sec-title">👥 Personal Egure Multiservicios</div>
+          <div id="dash-mecanicos"></div>
+        </div>
+        <div>
+          <div class="sec-title">📅 Últimos tickets registrados</div>
+          <div class="tw">
+            <table>
+              <thead><tr><th>Fecha</th><th>Mecánico</th><th>Vehículo</th><th>Servicio</th><th style="text-align:right">Importe</th></tr></thead>
+              <tbody id="dash-tickets"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTURAR TICKETS -->
+    <div class="page" id="page-captura">
+      <div class="tw" style="padding:0;">
+        <div class="th">
+          <div class="tt">🧾 Capturar Tickets de la Semana</div>
+          <div style="font-size:12px;color:var(--gris);" id="cap-sem-label"></div>
+        </div>
+        <div style="padding:20px;">
+          <div class="fg4" style="margin-bottom:18px;align-items:end;">
+            <div class="fgroup">
+              <label class="lbl">Mecánico</label>
+              <select id="cap-mecanico"><option value="">— Selecciona —</option></select>
+            </div>
+            <div class="fgroup">
+              <label class="lbl">Fecha</label>
+              <input type="date" id="cap-fecha">
+            </div>
+            <div></div>
+            <div style="display:flex;align-items:flex-end;">
+              <button class="btn btn-outline btn-sm" onclick="agregarFila()">+ Agregar fila</button>
+            </div>
+          </div>
+
+          <!-- Headers -->
+          <div style="display:grid;grid-template-columns:80px 70px 130px 1fr 95px 110px 75px 70px 36px;gap:6px;padding:5px 0;margin-bottom:2px;">
+            <div class="lbl">No. Ticket</div>
+            <div class="lbl">No. Orden</div>
+            <div class="lbl">Vehículo</div>
+            <div class="lbl">Servicio</div>
+            <div class="lbl">Tipo</div>
+            <div class="lbl">Importe $</div>
+            <div class="lbl"># Llantas</div>
+            <div class="lbl">Com. Llanta</div>
+            <div></div>
+          </div>
+          <div id="cap-filas"></div>
+
+          <!-- Subtotales -->
+          <div style="background:var(--azul-bg);border:1px solid #BDD7EE;border-radius:8px;padding:14px 16px;margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;">
+            <div><div class="lbl">Importe Total</div><div style="font-family:Courier New,monospace;font-weight:800;font-size:18px;color:var(--azul);" id="sub-importe">$0.00</div></div>
+            <div><div class="lbl">Comisión 2.5%</div><div style="font-family:Courier New,monospace;font-weight:800;font-size:18px;color:var(--verde);" id="sub-com">$0.00</div></div>
+            <div><div class="lbl">Com. Llantas</div><div style="font-family:Courier New,monospace;font-weight:800;font-size:18px;color:var(--amarillo);" id="sub-llantas">$0.00</div></div>
+            <div><div class="lbl">Tickets</div><div style="font-family:Courier New,monospace;font-weight:800;font-size:18px;color:var(--gris);" id="sub-num">0</div></div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn btn-outline" onclick="limpiarCaptura()">Limpiar</button>
+            <button class="btn btn-success" onclick="guardarTickets()">✓ Guardar Tickets</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets ya guardados esta semana para este mecánico -->
+      <div id="cap-guardados-wrap" style="display:none;">
+        <div class="sec-title" id="cap-guardados-title"></div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Fecha</th><th>Ticket</th><th>Orden</th><th>Vehículo/Servicio</th><th style="text-align:right">Importe</th><th style="text-align:center">Llantas</th><th style="text-align:right">Com.Llanta</th><th></th></tr></thead>
+            <tbody id="cap-guardados-body"></tbody>
+            <tfoot><tr><td colspan="4"><strong>TOTAL</strong></td><td id="cg-importe" style="text-align:right;font-family:Courier New,monospace;"></td><td></td><td id="cg-llantas" style="text-align:right;font-family:Courier New,monospace;"></td><td></td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULAR NÓMINA -->
+    <div class="page" id="page-nomina">
+      <div class="print-header">
+        <h1>MULTISERVICIOS EGURE — SIGLO XXI</h1>
+        <p id="print-periodo"></p>
+      </div>
+      <div id="nomina-mecanicos"></div>
+    </div>
+
+    <!-- RESUMEN SEMANA -->
+    <div class="page" id="page-resumen">
+      <div class="cg4" id="res-cards"></div>
+      <div class="tw">
+        <div class="th"><div class="tt">Resumen de Nómina — <span id="res-sem-label" style="font-weight:400;color:var(--gris);"></span></div>
+          <button class="btn btn-outline btn-sm" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn btn-primary btn-sm" onclick="exportarNominaPDF()">📄 Exportar PDF</button>
+        </div>
+        <div class="nom-resumen" style="border:none;border-radius:0;margin-bottom:0;">
+          <div class="nom-row head">
+            <div>Mecánico</div><div>Ventas</div><div>Com. 2.5%</div>
+            <div>Llantas</div><div>Sueldo</div><div>Extras</div>
+            <div>Deducciones</div><div>TOTAL A PAGAR</div>
+          </div>
+          <div id="res-filas"></div>
+          <div class="nom-row total-row" id="res-totales"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MECÁNICOS -->
+    <div class="page" id="page-mecanicos">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="sec-title" style="margin-bottom:0">Personal registrado</div>
+        <button class="btn btn-primary" onclick="abrirModalMec()">+ Agregar Mecánico</button>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Nombre</th><th>Sueldo Fijo Semanal</th><th>% Comisión</th><th>Com. por Llanta</th><th>Activo</th><th></th></tr></thead>
+          <tbody id="tabla-mecanicos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADMINISTRATIVOS -->
+    <div class="page" id="page-administrativos">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="sec-title" style="margin-bottom:0">Nómina Administrativa</div>
+      </div>
+      <!-- Cards resumen -->
+      <div class="cg4" id="adm-cards" style="margin-bottom:18px;"></div>
+      <!-- Cards por admin -->
+      <div id="adm-lista"></div>
+    </div>
+
+    <!-- RESPALDO -->
+    <div class="page" id="page-respaldo">
+      <div style="max-width:620px;display:grid;gap:16px;">
+
+        <div style="background:#FFF8E1;border:2px solid #F59E0B;border-radius:10px;padding:16px 20px;">
+          <div style="font-weight:800;font-size:14px;color:#92400E;margin-bottom:6px;">⚠️ ¿Perdiste datos o abriste un HTML nuevo?</div>
+          <p style="font-size:13px;color:#78350F;line-height:1.6;margin-bottom:12px;">
+            Usa el botón <strong>"Cargar JSON"</strong> para restaurar tu último respaldo.<br>
+            Selecciona el archivo <code>nomina_respaldo_FECHA.json</code> y tus datos regresan al instante.
+          </p>
+          <label style="display:inline-block;background:#F59E0B;color:#fff;font-weight:700;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;">
+            📂 Cargar JSON (restaurar datos)
+            <input type="file" id="file-resp" accept=".json" style="display:none;" onchange="restaurarJSON(this)">
+          </label>
+        </div>
+
+        <div class="tw" style="padding:22px;">
+          <div style="font-weight:800;font-size:15px;color:var(--azul);margin-bottom:10px;">💾 Descargar Respaldo</div>
+          <p style="color:var(--gris);font-size:13px;margin-bottom:14px;line-height:1.6;">
+            Descarga todos tus datos como archivo JSON. <strong>Hazlo al terminar cada día.</strong><br>
+            Guárdalo en una carpeta segura o en OneDrive/Google Drive.
+          </p>
+          <button class="btn btn-primary" onclick="descargar()" style="font-size:14px;padding:10px 22px;">📥 Descargar respaldo ahora</button>
+        </div>
+
+        <div class="tw" style="padding:22px;border:1px solid #FECACA;">
+          <div style="font-weight:800;font-size:15px;color:var(--rojo);margin-bottom:10px;">⚠️ Restaurar (reemplaza TODO)</div>
+          <p style="color:var(--gris);font-size:13px;margin-bottom:12px;">Esta opción reemplaza absolutamente todos los datos actuales con el archivo seleccionado.</p>
+          <button class="btn btn-danger" onclick="document.getElementById('file-resp').click()">⚠ Restaurar desde archivo</button>
+        </div>
+        <div class="tw" style="padding:22px;">
+          <div style="font-weight:800;font-size:15px;color:var(--rojo);margin-bottom:10px;">🗑 Borrar semana</div>
+          <p style="color:var(--gris);font-size:13px;margin-bottom:12px;">Borra todos los tickets de la semana activa. Los mecánicos y configuración se conservan.</p>
+          <button class="btn btn-danger" onclick="if(confirm('¿Borrar todos los tickets de esta semana?'))borrarSemana()">Borrar semana activa</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL MECÁNICO -->
+<div class="overlay" id="modal-mec">
+  <div class="modal">
+    <div class="modal-title" id="modal-mec-title">👷 Nuevo Mecánico</div>
+    <div class="fg2">
+      <div class="fgroup full"><label class="lbl">Nombre completo</label><input type="text" id="m-nombre" placeholder="Nombre del mecánico"></div>
+      <div class="fgroup"><label class="lbl">Sueldo Fijo Semanal $</label><input type="number" id="m-sueldo" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="fgroup"><label class="lbl">% Comisión sobre ventas</label><input type="number" id="m-comision" min="0" max="100" step="0.1" placeholder="2.5" value="2.5"></div>
+      <div class="fgroup"><label class="lbl">Comisión por llanta instalada $</label><input type="number" id="m-com-llanta" min="0" step="1" placeholder="25" value="25"></div>
+      <div class="fgroup"><label class="lbl">Color de etiqueta</label>
+        <select id="m-color">
+          <option value="#1B3A6B">Azul marino</option><option value="#16A34A">Verde</option>
+          <option value="#DC2626">Rojo</option><option value="#D97706">Naranja</option>
+          <option value="#7C3AED">Morado</option><option value="#0891B2">Cyan</option>
+        </select>
+      </div>
+      <div class="fgroup" style="align-items:flex-end;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding-bottom:8px;">
+          <input type="checkbox" id="m-activo" checked style="width:16px;height:16px;"> <span style="font-size:13px;font-weight:500;">Activo</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModalMec()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarMecanico()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE NÓMINA -->
+<div class="overlay" id="modal-det">
+  <div class="modal modal-lg">
+    <div class="modal-title" id="modal-det-title">Detalle de Nómina</div>
+    <div id="modal-det-content"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModalDet()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+
+// ============================================================
+// GITHUB STORAGE — DATOS EN LA NUBE
+// ============================================================
+const GH_TOKEN   = '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';
+const GH_REPO    = 'EGURE3/nomina';
+const GH_FILE    = 'datos_nomina.json';
+const GH_API     = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+GH_FILE;
+
+let _ghSha = null; // SHA del archivo actual en GitHub
+
+async function ghGuardar(data){
+  try{
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+    const body = {message:'Actualizar nomina '+new Date().toISOString().split('T')[0], content};
+    if(_ghSha) body.sha = _ghSha;
+    const res = await fetch(GH_API,{
+      method:'PUT',
+      headers:{'Authorization':'token '+GH_TOKEN,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const json = await res.json();
+    if(json.content) _ghSha = json.content.sha;
+    return true;
+  }catch(e){console.error('Error guardando en GitHub:',e); return false;}
+}
+
+async function ghCargar(){
+  try{
+    const res = await fetch(GH_API+'?t='+Date.now(),{
+      headers:{'Authorization':'token '+GH_TOKEN}
+    });
+    if(!res.ok) return null;
+    const json = await res.json();
+    _ghSha = json.sha;
+    const content = decodeURIComponent(escape(atob(json.content.replace(/\n/g,''))));
+    return JSON.parse(content);
+  }catch(e){console.error('Error cargando de GitHub:',e); return null;}
+}
+// ============================================================
+// BASE DE DATOS — localStorage
+// ============================================================
+const LS_KEY = 'nomina_egure_v1';
+let DB = {
+  mecanicos: [
+    {id:'pedro',    nombre:'PEDRO',     sueldo:3250, comision:2.5, comLlanta:25, activo:true,  color:'#1B3A6B', tipo:'mecanico', infonavit:0},
+    {id:'mauricio', nombre:'MAURICIO',  sueldo:3250, comision:2.5, comLlanta:25, activo:true,  color:'#16A34A', tipo:'mecanico', infonavit:409},
+    {id:'sergio',   nombre:'SERGIO',    sueldo:3000, comision:2.5, comLlanta:25, activo:true,  color:'#DC2626', tipo:'mecanico', infonavit:0},
+    {id:'manny',    nombre:'EMMANUEL',  sueldo:3250, comision:2.5, comLlanta:25, activo:true,  color:'#D97706', tipo:'mecanico', infonavit:0},
+    {id:'ivan',     nombre:'IVAN',      sueldo:3250, comision:2.5, comLlanta:25, activo:true,  color:'#7C3AED', tipo:'mecanico', infonavit:0},
+    {id:'mario',    nombre:'MARIO',     sueldo:3250, comision:2.5, comLlanta:25, activo:true,  color:'#0891B2', tipo:'mecanico', infonavit:0},
+    {id:'ernesto',  nombre:'ERNESTO',   sueldo:3250, comision:2.5, comLlanta:25, activo:true,  color:'#B45309', tipo:'mecanico', infonavit:0},
+    {id:'memo',     nombre:'MEMO',      sueldo:0,    comision:10,  comLlanta:25, activo:true,  color:'#0F766E', tipo:'memo',     infonavit:0},
+  ],
+  administrativos: [
+    {id:'lilian',   nombre:'LILIAN',    sueldo:4000, activo:true,  color:'#BE185D'},
+    {id:'juan_adm', nombre:'JUAN',      sueldo:4000, activo:true,  color:'#1D4ED8'},
+    {id:'elizabeth',nombre:'ELIZABETH', sueldo:4000, activo:true,  color:'#7C3AED'},
+  ],
+  // tickets[semanaKey][mecId] = [{ticket,orden,vehiculo,servicio,importe,llantas,comLlanta,fecha}]
+  tickets: {},
+  // ajustes[semanaKey][mecId] = {extras:{diasExtra,horasExtras,otro}, deducciones:{prestamo,casa,otro}, notas}
+  ajustes: {}
+};
+
+let semanaOffset = 0;
+let editMecId = null;
+let filas = [];
+
+function cargar(){
+  const sg=document.getElementById('sg');
+  if(sg)sg.textContent='⏳ Cargando datos...';
+  ghCargar().then(data=>{
+    if(data && data.db){
+      DB.tickets       = data.db.tickets       || {};
+      DB.ajustes       = data.db.ajustes        || {};
+      DB.mecanicos     = data.db.mecanicos      || DATOS_BASE.mecanicos;
+      DB.administrativos = data.db.administrativos || DATOS_BASE.administrativos;
+      if(sg)sg.textContent='✅ Datos cargados · GitHub';
+    } else {
+      // Primera vez: usar DATOS_BASE
+      DB.tickets       = JSON.parse(JSON.stringify(DATOS_BASE.tickets));
+      DB.ajustes       = JSON.parse(JSON.stringify(DATOS_BASE.ajustes));
+      DB.mecanicos     = DATOS_BASE.mecanicos;
+      DB.administrativos = DATOS_BASE.administrativos;
+      if(sg)sg.textContent='✅ Datos iniciales cargados';
+    }
+    // Ir a última semana con datos
+    const sems=Object.keys(DB.tickets).filter(k=>Object.values(DB.tickets[k]).some(a=>Array.isArray(a)&&a.some(t=>!t._hist))).sort();
+    if(sems.length){
+      const last=sems[sems.length-1];
+      const cur=getSemana(0).key;
+      semanaOffset=Math.round((new Date(last+'T12:00:00')-new Date(cur+'T12:00:00'))/(7*24*3600*1000));
+    }
+    actualizarChipSemana();
+    poblarSelectMecanicos();
+    renderDash();
+  }).catch(e=>{
+    console.error('Error cargando:',e);
+    DB.tickets       = JSON.parse(JSON.stringify(DATOS_BASE.tickets));
+    DB.ajustes       = JSON.parse(JSON.stringify(DATOS_BASE.ajustes));
+    DB.mecanicos     = DATOS_BASE.mecanicos;
+    DB.administrativos = DATOS_BASE.administrativos;
+    if(sg)sg.textContent='⚠️ Datos locales';
+    actualizarChipSemana();
+    poblarSelectMecanicos();
+    renderDash();
+  });
+}
+function guardar(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
+  // Guardar en GitHub también
+  ghGuardar({v:2,fecha:new Date().toISOString(),db:DB}).then(ok=>{
+    const t=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('sg').textContent = ok ? '✅ Guardado · '+t : '⚠️ Solo local · '+t;
+  });
+}
+
+let _ultimoRespaldo = null;
+function autoRespaldo(){
+  guardar(); // Guardar en GitHub automáticamente
+}
+
+// ============================================================
+// SEMANA
+// ============================================================
+function getSemana(offset=0){
+  const hoy = new Date();
+  const dia = hoy.getDay(); // 0=dom,6=sab
+  // Semana sab->vie: sab=0 dias atras, dom=1, lun=2, mar=3, mie=4, jue=5, vie=6
+  const diasDesdeSab = (dia === 6) ? 0 : (dia + 1);
+  const sabado = new Date(hoy);
+  sabado.setDate(hoy.getDate() - diasDesdeSab + (offset*7));
+  sabado.setHours(0,0,0,0);
+  const viernes = new Date(sabado); viernes.setDate(sabado.getDate()+6);
+  return {
+    lunes: sabado, sab: viernes,
+    key: sabado.toISOString().split('T')[0],
+    label: sabado.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}) + ' — ' + viernes.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})
+  };
+}
+
+function isoFecha(d){ return d.toISOString().split('T')[0]; }
+function fmtF(f){ if(!f)return''; const d=new Date(f+'T12:00:00'); return d.toLocaleDateString('es-MX',{weekday:'short',day:'2-digit',month:'short'}); }
+const $M = v => v!=null?'$'+Number(v).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+function tr(s,n){ return s&&s.length>n?s.substring(0,n)+'…':s||''; }
+
+function cambiarSemana(d){
+  semanaOffset += d;
+  actualizarChipSemana();
+  const pg = document.querySelector('.page.active')?.id?.replace('page-','');
+  if(pg==='dashboard') renderDash();
+  if(pg==='captura') renderGuardados();
+  if(pg==='nomina') renderNomina();
+  if(pg==='resumen') renderResumen();
+}
+
+function actualizarChipSemana(){
+  const sem = getSemana(semanaOffset);
+  document.getElementById('sem-chip').textContent = sem.label;
+  if(document.getElementById('cap-sem-label')) document.getElementById('cap-sem-label').textContent = sem.label;
+  if(document.getElementById('print-periodo')) document.getElementById('print-periodo').textContent = 'Semana del '+sem.label;
+}
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+const TITULOS = {dashboard:'Dashboard',captura:'Capturar Tickets',nomina:'Calcular Nómina',resumen:'Resumen de Semana',mecanicos:'Mecánicos',administrativos:'Administrativos',respaldo:'Respaldo'};
+function irA(pg,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('page-title').textContent = TITULOS[pg]||pg;
+  if(pg==='dashboard') renderDash();
+  if(pg==='captura'){ poblarSelectMecanicos(); iniciarFilas(); renderGuardados(); }
+  if(pg==='nomina') renderNomina();
+  if(pg==='resumen') renderResumen();
+  if(pg==='mecanicos') renderMecanicos();
+  if(pg==='administrativos') renderAdministrativos();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  document.getElementById('fecha-chip').textContent = new Date().toLocaleDateString('es-MX',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('cap-fecha').valueAsDate = new Date();
+  iniciarFilas();
+  cargar();
+}
+
+function poblarSelectMecanicos(){
+  const sel = document.getElementById('cap-mecanico');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— Selecciona —</option>';
+  DB.mecanicos.filter(m=>m.activo).forEach(m=>sel.add(new Option(m.nombre, m.id)));
+  // Opción especial para refacciones sin mecánico
+  const opt = new Option('📦 Refacciones (sin mecánico)', '_refacciones');
+  opt.style.color='#DC2626';
+  opt.style.fontWeight='700';
+  sel.add(opt);
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDash(){
+  const sem = getSemana(semanaOffset);
+  const semKey = sem.key;
+  const tks = DB.tickets[semKey] || {};
+
+  // Stats totales
+  let totalImporte=0, totalTickets=0, totalNomina=0;
+  const activos = DB.mecanicos.filter(m=>m.activo);
+  activos.forEach(m=>{
+    const mt = tks[m.id]||[];
+    const imp = mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan = mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com = (m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj = (DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const extras = (parseFloat(aj.extras?.diasExtra)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.otro)||0);
+    const deds = (parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0)+(m.infonavit||0);
+    totalNomina += m.sueldo + com + llan + extras - deds;
+    totalImporte += imp;
+    totalTickets += mt.length;
+  });
+
+  document.getElementById('dash-cards').innerHTML=`
+    <div class="card verde"><div class="card-lbl">Venta Total Semana</div><div class="card-val">${$M(totalImporte)}</div><div class="card-sub">${totalTickets} tickets · ${sem.label}</div></div>
+    <div class="card rojo"><div class="card-lbl">Nómina a Pagar</div><div class="card-val">${$M(totalNomina)}</div><div class="card-sub">${activos.length} mecánicos activos</div></div>
+    <div class="card morado"><div class="card-lbl">Mecánicos activos</div><div class="card-val">${activos.length}</div><div class="card-sub">registrados en sistema</div></div>
+    <div class="card amarillo"><div class="card-lbl">Semana</div><div class="card-val" style="font-size:16px;">${sem.label}</div><div class="card-sub">período activo</div></div>
+    <div class="card morado" style="cursor:pointer;" onclick="mostrarResumenDia()"><div class="card-lbl">📊 Venta del Día</div><div class="card-val" id="dash-venta-hoy">$0.00</div><div class="card-sub" id="dash-tickets-hoy">click para ver detalle</div></div>`;
+
+  // Por mecánico
+  const divM = document.getElementById('dash-mecanicos');
+  divM.innerHTML = activos.map(m=>{
+    const mt = tks[m.id]||[];
+    const imp = mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan = mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com = (m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj2 = (DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const extras2 = (parseFloat(aj2.extras?.diasExtra)||0)+(parseFloat(aj2.extras?.vacaciones)||0)+(parseFloat(aj2.extras?.horasExtras)||0)+(parseFloat(aj2.extras?.otro)||0);
+    const deds2 = (parseFloat(aj2.deducciones?.prestamo)||0)+(parseFloat(aj2.deducciones?.infonavit)||0)+(parseFloat(aj2.deducciones?.otro)||0)+(m.infonavit||0);
+    const total = m.sueldo+com+llan+extras2-deds2;
+    return `<div style="background:var(--blanco);border:1px solid var(--borde);border-left:4px solid ${m.color};border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13px;color:var(--texto)">${m.nombre}</div>
+        <div style="font-size:11px;color:var(--gris);margin-top:2px;">${mt.length} tickets · ${$M(imp)} en ventas</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:Courier New,monospace;font-weight:800;font-size:14px;color:${m.color}">${$M(total)}</div>
+        <div style="font-size:10px;color:var(--gris);">sueldo+comisión</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Calcular venta del día de hoy
+  const hoyStr = new Date().toISOString().split('T')[0];
+  let ventaHoy=0, tksHoy=0;
+  Object.values(tks).forEach(lista=>{
+    (lista||[]).filter(t=>t.fecha===hoyStr&&!t._hist).forEach(t=>{ventaHoy+=(t.importe||0);tksHoy++;});
+  });
+  const elVH=document.getElementById('dash-venta-hoy');
+  const elTH=document.getElementById('dash-tickets-hoy');
+  if(elVH) elVH.textContent=$M(ventaHoy);
+  if(elTH) elTH.textContent=tksHoy+' tickets capturados hoy · click para abrir detalle';
+
+  // Agregar administrativos al dashboard
+  const admDash = (DB.administrativos||[]).filter(a=>a.activo);
+  const htmlAdmDash = admDash.map(a=>{
+    const ajA=(DB.ajustes[semKey]||{})['adm_'+a.id]||{extras:{},deducciones:{}};
+    const extA=(parseFloat(ajA.extras?.horasExtras)||0)+(parseFloat(ajA.extras?.vacaciones)||0)+(parseFloat(ajA.extras?.otro)||0);
+    const dedA=(parseFloat(ajA.deducciones?.prestamo)||0)+(parseFloat(ajA.deducciones?.infonavit)||0)+(parseFloat(ajA.deducciones?.otro)||0);
+    const totalA=a.sueldo+extA-dedA;
+    return `<div style="background:var(--blanco);border:1px solid var(--borde);border-left:4px solid ${a.color};border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13px;color:var(--texto)">${a.nombre} <span style="font-size:10px;color:#94A3B8;font-weight:400">(Adm)</span></div>
+        <div style="font-size:11px;color:var(--gris);margin-top:2px;">Administrativo</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:Courier New,monospace;font-weight:800;font-size:14px;color:${a.color}">${$M(totalA)}</div>
+        <div style="font-size:10px;color:var(--gris);">sueldo</div>
+      </div>
+    </div>`;
+  }).join('');
+  divM.innerHTML += htmlAdmDash;
+
+  // Últimos tickets
+  const allTks = [];
+  Object.entries(tks).forEach(([mecId,list])=>{
+    const mec = DB.mecanicos.find(m=>m.id===mecId);
+    list.forEach(t=>allTks.push({...t, mecNombre:mec?.nombre||mecId}));
+  });
+  allTks.sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const tbody = document.getElementById('dash-tickets');
+  tbody.innerHTML = allTks.slice(0,10).map(t=>`<tr>
+    <td>${fmtF(t.fecha)}</td>
+    <td><span class="chip">${t.mecNombre}</span></td>
+    <td style="font-size:12px">${t.vehiculo||'—'}</td>
+    <td style="font-size:12px">${tr(t.servicio,35)}</td>
+    <td style="text-align:right" class="mono">${$M(t.importe)}</td>
+  </tr>`).join('') || '<tr><td colspan="5"><div class="empty">Sin tickets esta semana</div></td></tr>';
+}
+
+// ============================================================
+// CAPTURA DE TICKETS
+// ============================================================
+function iniciarFilas(){
+  filas = Array.from({length:6},()=>({ticket:'',orden:'',vehiculo:'',servicio:'',importe:'',llantas:'',comLlanta:''}));
+  renderFilas();
+}
+
+function renderFilas(){
+  const mecSelec = document.getElementById('cap-mecanico')?.value;
+  const modoRefac = mecSelec==='_refacciones';
+  document.getElementById('cap-filas').innerHTML = filas.map((f,i)=>{
+    if(modoRefac){ f.tipo='refaccion'; }
+    const tipo = f.tipo||'servicio';
+    const colorTipo = tipo==='servicio'?'#EBF3FB':tipo==='llantas'?'#FEF9C3':'#FEE2E2';
+    const esLlanta = tipo==='llantas';
+    const esRefac  = tipo==='refaccion';
+    return `<div class="ticket-row" style="background:${colorTipo};border-radius:6px;padding:3px 4px;">
+      <input type="text" value="${f.ticket}" placeholder="980" oninput="upFila(${i},'ticket',this.value)">
+      <input type="text" value="${f.orden}" placeholder="2861" oninput="upFila(${i},'orden',this.value)">
+      <input type="text" value="${f.vehiculo||''}" placeholder="Vehículo" oninput="upFila(${i},'vehiculo',this.value)" style="font-size:12px;">
+      <input type="text" value="${f.servicio||''}" placeholder="Servicio" oninput="upFila(${i},'servicio',this.value)" style="font-size:12px;">
+      <select onchange="upFila(${i},'tipo',this.value);renderFilas()" style="padding:4px 6px;border-radius:5px;border:1px solid #CBD5E1;font-size:12px;font-weight:600;">
+        <option value="servicio"  ${tipo==='servicio' ?'selected':''}>🔧 Servicio</option>
+        <option value="llantas"   ${tipo==='llantas'  ?'selected':''}>🔵 Llantas</option>
+        <option value="refaccion" ${tipo==='refaccion'?'selected':''}>📦 Refacción</option>
+      </select>
+      <input type="number" value="${f.importe}" placeholder="0.00" min="0" step="0.01" oninput="upFila(${i},'importe',this.value);calcSub()">
+      <input type="number" value="${f.llantas}" placeholder="0" min="0" ${esRefac?'disabled style="opacity:0.4"':''} oninput="upFila(${i},'llantas',this.value);calcComLlanta(${i})">
+      <input type="number" value="${f.comLlanta}" placeholder="0" min="0" ${esRefac?'disabled style="opacity:0.4"':''} oninput="upFila(${i},'comLlanta',this.value);calcSub()">
+      <button class="btn btn-xs" onclick="quitarFila(${i})" style="color:var(--rojo);border:1px solid #FECACA;background:#FEF2F2;border-radius:6px;cursor:pointer;">✕</button>
+    </div>`;
+  }).join('');
+  calcSub();
+}
+
+function upFila(i,k,v){ filas[i][k]=v; }
+function agregarFila(){ filas.push({ticket:'',orden:'',vehiculo:'',servicio:'',importe:'',llantas:'',comLlanta:'',tipo:'servicio'}); renderFilas(); }
+function quitarFila(i){ if(filas.length>1)filas.splice(i,1); renderFilas(); }
+
+function calcComLlanta(i){
+  const mecId = document.getElementById('cap-mecanico').value;
+  const mec = DB.mecanicos.find(m=>m.id===mecId);
+  const cl = mec?.comLlanta||25;
+  const n = parseInt(filas[i].llantas)||0;
+  filas[i].comLlanta = n*cl;
+  renderFilas();
+}
+
+function calcSub(){
+  let ventaTotal=0, comisionable=0, llan=0, refacs=0, num=0;
+  const mecId = document.getElementById('cap-mecanico')?.value;
+  const mec = DB.mecanicos.find(m=>m.id===mecId);
+  const pct = mecId==='_refacciones' ? 0 : (mec?.comision||2.5)/100;
+  filas.forEach(f=>{
+    const imp=parseFloat(f.importe)||0;
+    const tipo=f.tipo||'servicio';
+    if(imp||f.ticket){
+      ventaTotal+=imp; num++;
+      if(tipo==='servicio') comisionable+=imp;
+      if(tipo==='refaccion') refacs+=imp;
+      llan+=parseFloat(f.comLlanta)||0;
+    }
+  });
+  document.getElementById('sub-importe').textContent=$M(ventaTotal);
+  document.getElementById('sub-com').textContent=$M(comisionable*pct);
+  document.getElementById('sub-llantas').textContent=$M(llan);
+  document.getElementById('sub-num').textContent=num;
+}
+
+function guardarTickets(){
+  const mecId = document.getElementById('cap-mecanico').value;
+  const fecha = document.getElementById('cap-fecha').value;
+  if(!mecId){ toast('Selecciona un mecánico o Refacciones','err'); return; }
+  if(!fecha){ toast('Ingresa la fecha','err'); return; }
+  const validos = filas.filter(f=>f.ticket||f.importe||f.vehiculo);
+  if(validos.length===0){ toast('Agrega al menos un ticket','err'); return; }
+
+  const semKey = getSemana(semanaOffset).key;
+  if(!DB.tickets[semKey]) DB.tickets[semKey]={};
+  if(!DB.tickets[semKey][mecId]) DB.tickets[semKey][mecId]=[];
+
+  // Si es _refacciones, forzar tipo refaccion y comLlanta=0
+  const esRefacSection = mecId==='_refacciones';
+
+  validos.forEach(f=>{
+    if(esRefacSection){ f.tipo='refaccion'; f.llantas=0; f.comLlanta=0; }
+    DB.tickets[semKey][mecId].push({
+      ticket: f.ticket, orden: f.orden,
+      vehiculo: f.vehiculo, servicio: f.servicio,
+      importe: parseFloat(f.importe)||0,
+      tipo: f.tipo||'servicio',
+      llantas: parseInt(f.llantas)||0,
+      comLlanta: parseFloat(f.comLlanta)||0,
+      fecha
+    });
+  });
+
+  guardar();
+  autoRespaldo();
+  toast(`✓ ${validos.length} ticket(s) guardados para ${DB.mecanicos.find(m=>m.id===mecId)?.nombre||'Refacciones'}`,'ok');
+  limpiarCaptura();
+  renderGuardados();
+  renderDash();
+}
+
+function limpiarCaptura(){
+  iniciarFilas();
+  document.getElementById('cap-fecha').valueAsDate=new Date();
+}
+
+function renderGuardados(){
+  const mecId = document.getElementById('cap-mecanico')?.value;
+  const semKey = getSemana(semanaOffset).key;
+  const wrap = document.getElementById('cap-guardados-wrap');
+  if(!mecId||!DB.tickets[semKey]?.[mecId]?.length){ wrap.style.display='none'; return; }
+  const lista = DB.tickets[semKey][mecId];
+  const mec = DB.mecanicos.find(m=>m.id===mecId)||{nombre:mecId};
+  document.getElementById('cap-guardados-title').textContent=`Tickets guardados — ${mec.nombre} — Semana ${getSemana(semanaOffset).label}`;
+  let tImp=0, tLlan=0;
+  const tipoBadge=t=>({servicio:'<span style="background:#EBF3FB;color:#1B3A6B;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;">Serv</span>',llantas:'<span style="background:#FEF9C3;color:#D97706;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;">Llanta</span>',refaccion:'<span style="background:#FEE2E2;color:#DC2626;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;">Refac</span>'}[t]||'');
+  document.getElementById('cap-guardados-body').innerHTML=lista.map((t,i)=>{
+    tImp+=t.importe||0; tLlan+=t.comLlanta||0;
+    return `<tr style="background:${i%2?'#F8FAFF':'#fff'}">
+      <td>${fmtF(t.fecha)}</td>
+      <td class="mono">${t.ticket||'—'}</td>
+      <td class="mono">${t.orden||'—'}</td>
+      <td style="font-size:12px">${t.vehiculo||'—'}</td>
+      <td style="font-size:12px">${t.servicio||'—'}</td>
+      <td style="text-align:center">${tipoBadge(t.tipo||'servicio')}</td>
+      <td style="text-align:right" class="mono">${$M(t.importe)}</td>
+      <td style="text-align:center">${t.llantas||'—'}</td>
+      <td style="text-align:right" class="mono">${t.comLlanta?$M(t.comLlanta):'—'}</td>
+      <td style="display:flex;gap:4px;">
+        <button onclick="editarTicket('${semKey}','${mecId}',${i})" style="background:#EBF3FB;color:#1B3A6B;border:1px solid #BFDBFE;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;font-weight:700;">✏️</button>
+        <button onclick="borrarTicket('${semKey}','${mecId}',${i})" style="color:var(--rojo);border:1px solid #FECACA;background:#FEF2F2;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;font-weight:700;">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cg-importe').textContent=$M(tImp);
+  document.getElementById('cg-llantas').textContent=$M(tLlan);
+  wrap.style.display='block';
+}
+
+document.addEventListener('change',e=>{
+  if(e.target.id==='cap-mecanico') renderGuardados();
+});
+
+function editarTicket(semKey,mecId,idx){
+  const t=DB.tickets[semKey]?.[mecId]?.[idx];
+  if(!t) return;
+  filas=[{ticket:t.ticket||'',orden:t.orden||'',vehiculo:t.vehiculo||'',servicio:t.servicio||'',importe:t.importe||'',llantas:t.llantas||'',comLlanta:t.comLlanta||'',tipo:t.tipo||'servicio'}];
+  document.getElementById('cap-fecha').value=t.fecha||'';
+  DB.tickets[semKey][mecId].splice(idx,1);
+  guardar(); renderFilas(); renderGuardados();
+  toast('Ticket cargado para editar — modifica y guarda','ok');
+  document.getElementById('cap-filas').scrollIntoView({behavior:'smooth'});
+}
+
+function borrarTicket(semKey, mecId, idx){
+  DB.tickets[semKey][mecId].splice(idx,1);
+  if(DB.tickets[semKey][mecId].length===0) delete DB.tickets[semKey][mecId];
+  guardar(); autoRespaldo(); renderGuardados(); renderDash();
+  toast('Ticket eliminado','ok');
+}
+
+// ============================================================
+// CALCULAR NÓMINA
+// ============================================================
+function renderNomina(){
+  const sem = getSemana(semanaOffset);
+  const semKey = sem.key;
+  const tks = DB.tickets[semKey]||{};
+  if(!DB.ajustes[semKey]) DB.ajustes[semKey]={};
+
+  const activos = DB.mecanicos.filter(m=>m.activo);
+  const div = document.getElementById('nomina-mecanicos');
+
+  div.innerHTML = activos.map(m=>{
+    const mt = tks[m.id]||[];
+    const totalImp = mt.reduce((s,t)=>s+(t.importe||0),0); // venta total
+    const totalComisionable = mt.reduce((s,t)=>s+((t.tipo==='refaccion')?0:(t.importe||0)),0); // solo servicios
+    const totalLlan = mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    // Cálculo comisión: si tipo memo Y comision>=10, usar fórmula especial 10%/8%
+    let comPct = 0;
+    if(m.tipo==='memo' && parseFloat(m.comision)>=10){
+      const limite=40000;
+      const acumPrev = 0;
+      if(acumPrev>=limite){ comPct=totalComisionable*0.08; }
+      else if(acumPrev+totalComisionable<=limite){ comPct=totalComisionable*0.10; }
+      else{ const enBase=limite-acumPrev; comPct=(enBase*0.10)+((totalComisionable-enBase)*0.08); }
+    } else {
+      comPct = totalComisionable*(parseFloat(m.comision)/100);
+    }
+    const aj = DB.ajustes[semKey][m.id]||{extras:{diasExtra:0,horasExtras:0,otro:0},deducciones:{prestamo:0,casa:0,otro:0},notas:''};
+    const extras = (parseFloat(aj.extras?.diasExtra)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.otro)||0);
+    const deds = (parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0)+(m.infonavit||0);
+    const suma = m.sueldo + comPct + totalLlan + extras;
+    const total = suma - deds;
+
+    return `<div class="mec-card">
+      <div class="mec-header" style="background:${m.color};">
+        <div>
+          <div class="mec-nombre">${m.nombre}</div>
+          <div class="mec-periodo">${mt.length} tickets · ${sem.label}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:Courier New,monospace;font-size:20px;font-weight:800;">${$M(total)}</div>
+          <div style="font-size:11px;opacity:0.75;">total a pagar</div>
+        </div>
+      </div>
+      <div class="mec-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+
+          <!-- TICKETS -->
+          <div>
+            <div class="lbl" style="margin-bottom:8px;">Tickets de la semana</div>
+            ${mt.length?`<table style="font-size:12px;width:100%;">
+              <thead><tr><th style="padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--borde);">Ticket</th><th style="padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--borde);">Vehículo/Servicio</th><th style="padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--borde);text-align:right">Importe</th><th style="padding:4px 6px;background:#F8FAFC;border-bottom:1px solid var(--borde);">Llantas/Com</th></tr></thead>
+              <tbody>${mt.map(t=>`<tr style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:4px 6px;font-family:Courier New,monospace;font-weight:600">${t.ticket||'—'}</td>
+                <td style="padding:4px 6px;font-size:11px">${tr((t.vehiculo||'')+(t.servicio?' '+t.servicio:''),38)}</td>
+                <td style="padding:4px 6px;text-align:right;font-family:Courier New,monospace;font-weight:700">${$M(t.importe)}</td>
+                <td style="padding:4px 6px;font-size:11px">${t.llantas?`${t.llantas}🏠=${$M(t.comLlanta)}`:'—'}</td>
+              </tr>`).join('')}</tbody>
+              <tfoot><tr><td colspan="2" style="padding:6px;font-weight:800;background:#EBF3FB">TOTAL</td><td style="padding:6px;text-align:right;font-family:Courier New,monospace;font-weight:800;background:#EBF3FB">${$M(totalImp)}</td><td style="padding:6px;background:#EBF3FB;font-family:Courier New,monospace;font-weight:700">${$M(totalLlan)}</td></tr></tfoot>
+            </table>`:'<div style="color:var(--gris);font-size:12px;padding:8px 0;">Sin tickets esta semana</div>'}
+          </div>
+
+          <!-- CÁLCULO -->
+          <div>
+            <div class="lbl" style="margin-bottom:8px;">Cálculo de pago</div>
+            <div class="calc-box">
+              <div class="calc-row"><span class="calc-lbl">Sueldo fijo</span><span class="calc-val" style="color:var(--azul)">${$M(m.sueldo)}</span></div>
+              <div class="calc-row"><span class="calc-lbl">Comisión ${m.comision}% sobre ${$M(totalImp)}</span><span class="calc-val" style="color:var(--verde)">${$M(comPct)}</span></div>
+              <div class="calc-row"><span class="calc-lbl">Comisión llantas</span><span class="calc-val" style="color:var(--amarillo)">${$M(totalLlan)}</span></div>
+
+              <div style="margin-top:10px;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:0.5px;">+ Extras</div>
+              <div class="calc-row">
+                <span class="calc-lbl">Día extra</span>
+                <input type="number" min="0" step="0.01" value="${aj.extras?.diasExtra||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','extras','diasExtra',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+              </div>
+              <div class="calc-row">
+                <span class="calc-lbl">Vacaciones</span>
+                <input type="number" min="0" step="0.01" value="${aj.extras?.vacaciones||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','extras','vacaciones',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+              </div>
+              <div class="calc-row">
+                <span class="calc-lbl">Horas extras</span>
+                <input type="number" min="0" step="0.01" value="${aj.extras?.horasExtras||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','extras','horasExtras',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+              </div>
+              <div class="calc-row">
+                <span class="calc-lbl">Otro extra</span>
+                <input type="number" min="0" step="0.01" value="${aj.extras?.otro||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','extras','otro',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+              </div>
+
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(46,109,180,0.15);font-weight:700">
+                <span style="font-size:12px">SUMA</span>
+                <span style="font-family:Courier New,monospace;font-weight:800" id="suma-${m.id}">${$M(suma)}</span>
+              </div>
+
+              <div style="margin-top:10px;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--rojo);text-transform:uppercase;letter-spacing:0.5px;">− Deducciones</div>
+              ${m.infonavit?`<div class="calc-row">
+                <span class="calc-lbl" style="color:var(--rojo)">INFONAVIT (fijo)</span>
+                <span style="font-family:Courier New,monospace;font-weight:700;font-size:12px;color:var(--rojo)">-${$M(m.infonavit)}</span>
+              </div>`:''}
+              <div class="calc-row">
+                <span class="calc-lbl">Préstamo</span>
+                <input type="number" min="0" step="0.01" value="${aj.deducciones?.prestamo||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','deducciones','prestamo',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+              </div>
+              <div class="calc-row">
+                <span class="calc-lbl">INFONAVIT</span>
+                <input type="number" min="0" step="0.01" value="${aj.deducciones?.infonavit||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','deducciones','infonavit',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+              </div>
+              <div class="calc-row">
+                <span class="calc-lbl">Otras deducciones</span>
+                <input type="number" min="0" step="0.01" value="${aj.deducciones?.otro||''}" placeholder="0.00"
+                  onchange="setAjuste('${semKey}','${m.id}','deducciones','otro',this.value)"
+                  style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+              </div>
+            </div>
+            <div class="calc-total" style="background:${m.color}">
+              <span>TOTAL A PAGAR</span>
+              <span class="mono" id="total-${m.id}">${$M(total)}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Agregar administrativos a la misma vista
+  const admActivos = (DB.administrativos||[]).filter(a=>a.activo);
+  if(!DB.ajustes[semKey]) DB.ajustes[semKey]={};
+  const htmlAdms = admActivos.map(a=>{
+    const aj = DB.ajustes[semKey]['adm_'+a.id]||{extras:{horasExtras:0,vacaciones:0,otro:0},deducciones:{prestamo:0,infonavit:0,otro:0},notas:''};
+    const ext=(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.otro)||0);
+    const ded=(parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0);
+    const suma=a.sueldo+ext;
+    const total=suma-ded;
+    return `<div class="mec-card">
+      <div class="mec-header" style="background:${a.color};">
+        <div>
+          <div class="mec-nombre">${a.nombre} <span style="font-size:11px;opacity:0.8;font-weight:400">(Administrativo)</span></div>
+          <div class="mec-periodo">${sem.label}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:Courier New,monospace;font-size:20px;font-weight:800;">${$M(total)}</div>
+          <div style="font-size:11px;opacity:0.75;">total a pagar</div>
+        </div>
+      </div>
+      <div class="mec-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div>
+            <div class="lbl" style="margin-bottom:10px;">Resumen</div>
+            <div class="calc-row"><span class="calc-lbl">Sueldo base</span><span class="mono">${$M(a.sueldo)}</span></div>
+            <div class="calc-row"><span class="calc-lbl">Extras</span><span class="mono" style="color:var(--verde)">${ext?'+'+$M(ext):'—'}</span></div>
+            <div class="calc-row"><span class="calc-lbl">Deducciones</span><span class="mono" style="color:var(--rojo)">${ded?'-'+$M(ded):'—'}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid var(--azul-m);margin-top:8px;font-weight:800;">
+              <span>TOTAL</span><span style="font-family:Courier New,monospace;color:${a.color}">${$M(total)}</span>
+            </div>
+          </div>
+          <div>
+            <div class="lbl" style="margin-bottom:8px;color:var(--verde);">+ Extras</div>
+            <div class="calc-row"><span class="calc-lbl">Horas extras</span>
+              <input type="number" min="0" step="0.01" value="${aj.extras?.horasExtras||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','extras','horasExtras',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">Vacaciones</span>
+              <input type="number" min="0" step="0.01" value="${aj.extras?.vacaciones||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','extras','vacaciones',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">Otro extra</span>
+              <input type="number" min="0" step="0.01" value="${aj.extras?.otro||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','extras','otro',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+            </div>
+            <div class="lbl" style="margin-top:12px;margin-bottom:8px;color:var(--rojo);">− Deducciones</div>
+            <div class="calc-row"><span class="calc-lbl">Préstamo</span>
+              <input type="number" min="0" step="0.01" value="${aj.deducciones?.prestamo||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','deducciones','prestamo',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">INFONAVIT</span>
+              <input type="number" min="0" step="0.01" value="${aj.deducciones?.infonavit||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','deducciones','infonavit',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">Otras deduc.</span>
+              <input type="number" min="0" step="0.01" value="${aj.deducciones?.otro||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','deducciones','otro',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  div.innerHTML = (div.innerHTML||'') + htmlAdms;
+
+  if(!activos.length) div.innerHTML='<div class="empty">Sin mecánicos activos. Ve a la sección Mecánicos para agregarlos.</div>';
+}
+
+function setAjuste(semKey, mecId, tipo, campo, valor){
+  if(!DB.ajustes[semKey]) DB.ajustes[semKey]={};
+  if(!DB.ajustes[semKey][mecId]) DB.ajustes[semKey][mecId]={extras:{},deducciones:{}};
+  DB.ajustes[semKey][mecId][tipo][campo] = parseFloat(valor)||0;
+  guardar();
+  // Recalcular totales en vivo
+  const tks = DB.tickets[semKey]||{};
+  const m = DB.mecanicos.find(x=>x.id===mecId);
+  if(!m) return;
+  const mt = tks[mecId]||[];
+  const imp = mt.reduce((s,t)=>s+(t.importe||0),0);
+  const llan = mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+  const com = imp*(m.comision/100);
+  const aj = DB.ajustes[semKey][mecId];
+  const ext=(aj.extras?.diasExtra||0)+(aj.extras?.horasExtras||0)+(aj.extras?.otro||0);
+  const ded=(aj.deducciones?.prestamo||0)+(aj.deducciones?.otro||0)+(m.infonavit||0);
+  const suma=m.sueldo+com+llan+ext;
+  const total=suma-ded;
+  const elSuma=document.getElementById('suma-'+mecId);
+  const elTotal=document.getElementById('total-'+mecId);
+  if(elSuma) elSuma.textContent=$M(suma);
+  if(elTotal) elTotal.textContent=$M(total);
+}
+
+// ============================================================
+// RESUMEN
+// ============================================================
+function renderResumen(){
+  const sem = getSemana(semanaOffset);
+  const semKey = sem.key;
+  document.getElementById('res-sem-label').textContent = sem.label;
+  const tks = DB.tickets[semKey]||{};
+  const activos = DB.mecanicos.filter(m=>m.activo);
+  let tVentas=0, tNomina=0, tCom=0, tLlan=0;
+
+  const filas = activos.map(m=>{
+    const mt=tks[m.id]||[];
+    const imp=mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan=mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com=(m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj=(DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const ext=(parseFloat(aj.extras?.diasExtra)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.otro)||0);
+    const ded=(parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0)+(m.infonavit||0);
+    const total=m.sueldo+com+llan+ext-ded;
+    tVentas+=imp; tNomina+=total; tCom+=com; tLlan+=llan;
+    return `<div class="nom-row" style="border-left:4px solid ${m.color}">
+      <div style="font-weight:700">${m.nombre}</div>
+      <div class="mono">${$M(imp)}</div>
+      <div class="mono" style="color:var(--verde)">${$M(com)}</div>
+      <div class="mono" style="color:var(--amarillo)">${$M(llan)}</div>
+      <div class="mono">${$M(m.sueldo)}</div>
+      <div class="mono" style="color:var(--verde)">${ext?$M(ext):'—'}</div>
+      <div class="mono" style="color:var(--rojo)">${ded?$M(ded):'—'}</div>
+      <div class="mono" style="font-weight:800;font-size:14px;color:${m.color}">${$M(total)}</div>
+    </div>`;
+  });
+
+  // Agregar filas de administrativos al resumen
+  const admActivos2 = (DB.administrativos||[]).filter(a=>a.activo);
+  const filasAdm = admActivos2.map(a=>{
+    const aj=(DB.ajustes[semKey]||{})['adm_'+a.id]||{extras:{},deducciones:{}};
+    const ext=(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.otro)||0);
+    const ded=(parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0);
+    const total=a.sueldo+ext-ded;
+    tNomina+=total;
+    return `<div class="nom-row" style="border-left:4px solid ${a.color};background:#F8FAFF">
+      <div style="font-weight:700">${a.nombre} <span style="font-size:10px;color:#94A3B8;font-weight:400">(Adm)</span></div>
+      <div class="mono">—</div>
+      <div class="mono">—</div>
+      <div class="mono">—</div>
+      <div class="mono">${$M(a.sueldo)}</div>
+      <div class="mono" style="color:var(--verde)">${ext?$M(ext):'—'}</div>
+      <div class="mono" style="color:var(--rojo)">${ded?$M(ded):'—'}</div>
+      <div class="mono" style="font-weight:800;font-size:14px;color:${a.color}">${$M(total)}</div>
+    </div>`;
+  });
+  document.getElementById('res-filas').innerHTML=filas.concat(filasAdm).join('');
+  // Agregar nómina admins a tNomina para el total
+  admActivos2.forEach(a=>{
+    const aj2=(DB.ajustes[semKey]||{})['adm_'+a.id]||{extras:{},deducciones:{}};
+    const ext2=(parseFloat(aj2.extras?.horasExtras)||0)+(parseFloat(aj2.extras?.vacaciones)||0)+(parseFloat(aj2.extras?.otro)||0);
+    const ded2=(parseFloat(aj2.deducciones?.prestamo)||0)+(parseFloat(aj2.deducciones?.infonavit)||0)+(parseFloat(aj2.deducciones?.otro)||0);
+    // Ya sumado en filasAdm arriba
+  });
+  document.getElementById('res-totales').innerHTML=`
+    <div style="font-weight:800">TOTALES</div>
+    <div>${$M(tVentas)}</div>
+    <div>${$M(tCom)}</div>
+    <div>${$M(tLlan)}</div>
+    <div>—</div><div>—</div><div>—</div>
+    <div style="font-size:15px">${$M(tNomina)}</div>`;
+
+  document.getElementById('res-cards').innerHTML=`
+    <div class="card verde"><div class="card-lbl">Venta Total</div><div class="card-val">${$M(tVentas)}</div></div>
+    <div class="card rojo"><div class="card-lbl">Nómina Total</div><div class="card-val">${$M(tNomina)}</div></div>
+    <div class="card morado"><div class="card-lbl">Comisiones</div><div class="card-val">${$M(tCom)}</div></div>
+    <div class="card amarillo"><div class="card-lbl">Com. Llantas</div><div class="card-val">${$M(tLlan)}</div></div>`;
+}
+
+// ============================================================
+// ADMINISTRATIVOS
+// ============================================================
+function renderAdministrativos(){
+  const semKey = getSemana(semanaOffset).key;
+  if(!DB.ajustes[semKey]) DB.ajustes[semKey]={};
+  const adms = DB.administrativos||[];
+
+  let totalPagar = 0;
+
+  // Cards resumen
+  document.getElementById('adm-cards').innerHTML = adms.filter(a=>a.activo).map(a=>{
+    const aj = DB.ajustes[semKey]['adm_'+a.id]||{extras:{horasExtras:0,otro:0},deducciones:{prestamo:0,infonavit:0,otro:0},notas:''};
+    const ext=(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.otro)||0);
+    const ded=(parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0);
+    const total=a.sueldo+ext-ded;
+    totalPagar+=total;
+    return `<div class="card" style="border-top-color:${a.color}">
+      <div class="card-lbl">${a.nombre}</div>
+      <div class="card-val" style="color:${a.color};font-size:20px">${$M(total)}</div>
+      <div class="card-sub">Sueldo base: ${$M(a.sueldo)}</div>
+    </div>`;
+  }).join('') + `<div class="card verde">
+    <div class="card-lbl">Total Nómina Adm.</div>
+    <div class="card-val">${$M(totalPagar)}</div>
+    <div class="card-sub">${adms.filter(a=>a.activo).length} administrativos</div>
+  </div>`;
+
+  // Cards detalle por administrativo
+  document.getElementById('adm-lista').innerHTML = adms.filter(a=>a.activo).map(a=>{
+    const aj = DB.ajustes[semKey]['adm_'+a.id]||{extras:{horasExtras:0,otro:0},deducciones:{prestamo:0,infonavit:0,otro:0},notas:''};
+    const ext=(parseFloat(aj.extras?.horasExtras)||0)+(parseFloat(aj.extras?.vacaciones)||0)+(parseFloat(aj.extras?.otro)||0);
+    const ded=(parseFloat(aj.deducciones?.prestamo)||0)+(parseFloat(aj.deducciones?.infonavit)||0)+(parseFloat(aj.deducciones?.otro)||0);
+    const suma=a.sueldo+ext;
+    const total=suma-ded;
+    return `<div class="mec-card" style="margin-bottom:14px;">
+      <div class="mec-header" style="background:${a.color};">
+        <div>
+          <div class="mec-nombre">${a.nombre}</div>
+          <div class="mec-periodo">Administrativo · Sueldo base ${$M(a.sueldo)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:Courier New,monospace;font-size:20px;font-weight:800;">${$M(total)}</div>
+          <div style="font-size:11px;opacity:0.75;">total a pagar</div>
+        </div>
+      </div>
+      <div class="mec-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div>
+            <div class="lbl" style="margin-bottom:10px;">Resumen</div>
+            <div class="calc-row"><span class="calc-lbl">Sueldo base</span><span class="mono">${$M(a.sueldo)}</span></div>
+            <div class="calc-row"><span class="calc-lbl">Horas extras</span><span class="mono" style="color:var(--verde)">${ext?'+'+$M(ext):'—'}</span></div>
+            <div class="calc-row"><span class="calc-lbl">Deducciones</span><span class="mono" style="color:var(--rojo)">${ded?'-'+$M(ded):'—'}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid var(--azul-m);margin-top:8px;font-weight:800;">
+              <span>TOTAL</span>
+              <span style="font-family:Courier New,monospace;color:${a.color}">${$M(total)}</span>
+            </div>
+          </div>
+          <div>
+            <div class="lbl" style="margin-bottom:8px;color:var(--verde);">+ Extras</div>
+            <div class="calc-row"><span class="calc-lbl">Horas extras</span>
+              <input type="number" min="0" step="0.01" value="${aj.extras?.horasExtras||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','extras','horasExtras',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">Vacaciones</span>
+              <input type="number" min="0" step="0.01" value="${aj.extras?.vacaciones||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','extras','vacaciones',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">Otro extra</span>
+              <input type="number" min="0" step="0.01" value="${aj.extras?.otro||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','extras','otro',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;">
+            </div>
+            <div class="lbl" style="margin-top:12px;margin-bottom:8px;color:var(--rojo);">− Deducciones</div>
+            <div class="calc-row"><span class="calc-lbl">Préstamo</span>
+              <input type="number" min="0" step="0.01" value="${aj.deducciones?.prestamo||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','deducciones','prestamo',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">INFONAVIT</span>
+              <input type="number" min="0" step="0.01" value="${aj.deducciones?.infonavit||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','deducciones','infonavit',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+            </div>
+            <div class="calc-row"><span class="calc-lbl">Otras deducciones</span>
+              <input type="number" min="0" step="0.01" value="${aj.deducciones?.otro||''}" placeholder="0.00"
+                onchange="setAjusteAdm('${semKey}','${a.id}','deducciones','otro',this.value)"
+                style="width:90px;text-align:right;font-family:Courier New,monospace;font-weight:600;font-size:12px;padding:4px 8px;border-color:#FECACA;color:var(--rojo);">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setAjusteAdm(semKey, admId, tipo, campo, valor){
+  if(!DB.ajustes[semKey]) DB.ajustes[semKey]={};
+  const key='adm_'+admId;
+  if(!DB.ajustes[semKey][key]) DB.ajustes[semKey][key]={extras:{},deducciones:{}};
+  DB.ajustes[semKey][key][tipo][campo]=parseFloat(valor)||0;
+  guardar();
+  renderAdministrativos();
+}
+
+// ============================================================
+// MECÁNICOS
+// ============================================================
+function renderMecanicos(){
+  const tbody = document.getElementById('tabla-mecanicos');
+  tbody.innerHTML = DB.mecanicos.map(m=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:${m.color};flex-shrink:0;"></div><strong>${m.nombre}</strong></div></td>
+    <td class="mono">${$M(m.sueldo)}</td>
+    <td class="mono">${m.comision}%</td>
+    <td class="mono">${$M(m.comLlanta)} / llanta</td>
+    <td><span class="badge ${m.activo?'b-verde':'b-rojo'}">${m.activo?'Activo':'Inactivo'}</span></td>
+    <td style="display:flex;gap:5px;">
+      <button class="btn btn-outline btn-xs" onclick="editarMec('${m.id}')">✏️ Editar</button>
+      <button class="btn btn-xs" onclick="toggleMec('${m.id}')" style="background:${m.activo?'#FEF2F2':'#DCFCE7'};color:${m.activo?'var(--rojo)':'var(--verde)'};border:none;border-radius:6px;cursor:pointer;padding:3px 8px;font-size:11px;font-weight:700;">${m.activo?'Pausar':'Activar'}</button>
+    </td>
+  </tr>`).join('');
+}
+
+function abrirModalMec(){
+  editMecId=null;
+  document.getElementById('modal-mec-title').textContent='👷 Nuevo Mecánico';
+  document.getElementById('m-nombre').value='';
+  document.getElementById('m-sueldo').value='';
+  document.getElementById('m-comision').value='2.5';
+  document.getElementById('m-com-llanta').value='25';
+  document.getElementById('m-activo').checked=true;
+  document.getElementById('modal-mec').classList.add('open');
+}
+function cerrarModalMec(){ document.getElementById('modal-mec').classList.remove('open'); editMecId=null; }
+function editarMec(id){
+  const m=DB.mecanicos.find(x=>x.id===id); if(!m)return;
+  editMecId=id;
+  document.getElementById('modal-mec-title').textContent='✏️ Editar Mecánico';
+  document.getElementById('m-nombre').value=m.nombre;
+  document.getElementById('m-sueldo').value=m.sueldo;
+  document.getElementById('m-comision').value=m.comision;
+  document.getElementById('m-com-llanta').value=m.comLlanta;
+  document.getElementById('m-color').value=m.color;
+  document.getElementById('m-activo').checked=m.activo;
+  document.getElementById('modal-mec').classList.add('open');
+}
+function toggleMec(id){ const m=DB.mecanicos.find(x=>x.id===id); if(m){m.activo=!m.activo;guardar();renderMecanicos();} }
+
+function guardarMecanico(){
+  const nombre=document.getElementById('m-nombre').value.trim().toUpperCase();
+  if(!nombre){ toast('Ingresa el nombre','err'); return; }
+  const data={nombre,sueldo:parseFloat(document.getElementById('m-sueldo').value)||0,comision:parseFloat(document.getElementById('m-comision').value)||2.5,comLlanta:parseFloat(document.getElementById('m-com-llanta').value)||25,color:document.getElementById('m-color').value,activo:document.getElementById('m-activo').checked};
+  if(editMecId){ const m=DB.mecanicos.find(x=>x.id===editMecId); if(m)Object.assign(m,data); }
+  else{ DB.mecanicos.push({...data,id:'mec'+Date.now()}); }
+  guardar(); cerrarModalMec(); renderMecanicos(); poblarSelectMecanicos();
+  toast('Mecánico guardado','ok');
+}
+
+// ============================================================
+// ============================================================
+// EXPORTAR PDF
+// ============================================================
+const CSS_PDF = `
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Arial,sans-serif;font-size:12px;color:#000;background:#fff;padding:18px;}
+  .ph{text-align:center;border-bottom:3px solid #1B3A6B;padding-bottom:12px;margin-bottom:18px;}
+  .ph h1{font-size:19px;color:#1B3A6B;font-weight:800;}
+  .ph h2{font-size:13px;color:#444;font-weight:400;margin-top:3px;}
+  .ph .per{font-size:11px;color:#666;margin-top:2px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:11px;}
+  thead th{background:#1B3A6B;color:#fff;padding:7px 9px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;}
+  tbody tr:nth-child(even){background:#F0F6FF;}
+  tbody td{padding:6px 9px;border-bottom:1px solid #E2E8F0;}
+  tfoot td{background:#EBF3FB;font-weight:800;padding:7px 9px;border-top:2px solid #1B3A6B;}
+  .mono{font-family:"Courier New",monospace;font-weight:600;}
+  .stit{font-size:13px;font-weight:800;color:#1B3A6B;border-left:4px solid #1B3A6B;padding-left:8px;margin:16px 0 10px;}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+  .card{border:1px solid #CBD5E1;border-radius:5px;padding:8px 10px;border-top:3px solid #2E6DB4;}
+  .card.v{border-top-color:#16A34A;}.card.r{border-top-color:#DC2626;}.card.m{border-top-color:#7C3AED;}
+  .cl{font-size:9px;text-transform:uppercase;color:#64748B;font-weight:700;}
+  .cv{font-size:18px;font-weight:800;color:#1B3A6B;font-family:"Courier New",monospace;margin-top:3px;}
+  .card.v .cv{color:#16A34A;}.card.r .cv{color:#DC2626;}.card.m .cv{color:#7C3AED;}
+  .mb{border:1px solid #CBD5E1;border-radius:5px;margin-bottom:12px;} .mbh{page-break-after:avoid;}
+  .mbh{padding:9px 13px;color:#fff;display:flex;justify-content:space-between;align-items:center;}
+  .mbb{padding:10px 13px;display:grid;grid-template-columns:1.6fr 1fr;gap:14px;}
+  .cr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #F1F5F9;font-size:11px;}
+  .ct{background:#1B3A6B;color:#fff;padding:8px 11px;border-radius:4px;display:flex;justify-content:space-between;font-weight:800;font-size:14px;margin-top:8px;}
+  .firma-row{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:28px;}
+  .firma{border-top:1px solid #000;padding-top:5px;text-align:center;font-size:11px;}
+  .footer{margin-top:20px;border-top:1px solid #CBD5E1;padding-top:7px;font-size:10px;color:#64748B;display:flex;justify-content:space-between;}
+  @media print{body{padding:8px;}}
+`;
+
+function abrirVentanaPDF(titulo, html) {
+  const v = window.open('','_blank');
+  v.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${titulo}</title><style>${CSS_PDF}</style></head><body>${html}<script>window.onload=function(){setTimeout(()=>window.print(),400);}<\/script>
+<!-- MODAL RESUMEN DEL DÍA -->
+<div id="modal-dia" onclick="if(event.target===this)cerrarResumenDia()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:99999;overflow-y:auto;padding:20px 0;">
+  <div style="background:#fff;margin:30px auto;max-width:700px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;">
+    <div style="background:#1B3A6B;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:17px;font-weight:800;">📊 Resumen del Día</div>
+        <div id="modal-dia-fecha" style="font-size:12px;opacity:0.8;margin-top:2px;"></div>
+      </div>
+      <button onclick="cerrarResumenDia()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;font-weight:700;">✕</button>
+    </div>
+    <!-- Selector de fecha -->
+    <div style="padding:16px 24px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;gap:12px;">
+      <label style="font-weight:600;font-size:13px;">Ver día:</label>
+      <input type="date" id="modal-dia-picker" onchange="cargarResumenDia(this.value)"
+        style="padding:6px 12px;border:1px solid #CBD5E1;border-radius:7px;font-size:13px;font-weight:600;">
+      <span style="font-size:12px;color:#64748B;">Selecciona cualquier día de la semana activa</span>
+    </div>
+    <!-- Cards resumen -->
+    <div id="modal-dia-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px;"></div>
+    <!-- Tabla detalle -->
+    <div style="padding:0 24px 24px;">
+      <div id="modal-dia-tabla"></div>
+    </div>
+  </div>
+</div>
+</body></html>`);
+  v.document.close();
+}
+
+function exportarNominaPDF() {
+  const sem = getSemana(semanaOffset);
+  const semKey = sem.key;
+  const tks = DB.tickets[semKey]||{};
+  const activos = DB.mecanicos.filter(m=>m.activo);
+  let tVentas=0,tNomina=0,tCom=0,tLlan=0;
+  const now = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  // Resumen cards
+  activos.forEach(m=>{
+    const mt=tks[m.id]||[];
+    const imp=mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan=mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com=(m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj=(DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const ext=(+aj.extras?.diasExtra||0)+(+aj.extras?.vacaciones||0)+(+aj.extras?.horasExtras||0)+(+aj.extras?.otro||0);
+    const ded=(+aj.deducciones?.prestamo||0)+(+aj.deducciones?.infonavit||0)+(+aj.deducciones?.otro||0)+(m.infonavit||0);
+    tVentas+=imp; tCom+=com; tLlan+=llan; tNomina+=m.sueldo+com+llan+ext-ded;
+  });
+
+  // Bloques por mecánico
+  const bloques = activos.map(m=>{
+    const mt=tks[m.id]||[];
+    const imp=mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan=mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com=(m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj=(DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const ext=(+aj.extras?.diasExtra||0)+(+aj.extras?.vacaciones||0)+(+aj.extras?.horasExtras||0)+(+aj.extras?.otro||0);
+    const ded=(+aj.deducciones?.prestamo||0)+(+aj.deducciones?.infonavit||0)+(+aj.deducciones?.otro||0)+(m.infonavit||0);
+    const suma=m.sueldo+com+llan+ext;
+    const total=suma-ded;
+    const ticketRows = mt.map(t=>`<tr><td class="mono">${t.ticket||'—'}</td><td>${(t.vehiculo||'')+' '+(t.servicio||'')}</td><td class="mono" style="text-align:right">${$M(t.importe)}</td><td style="text-align:center">${t.llantas||'—'}</td><td class="mono" style="text-align:right">${t.comLlanta?$M(t.comLlanta):'—'}</td></tr>`).join('');
+    return `<div class="mb">
+      <div class="mbh" style="background:${m.color}">
+        <div><strong style="font-size:14px">${m.nombre}</strong><div style="font-size:10px;opacity:0.8">${mt.length} tickets · ${sem.label}</div></div>
+        <div style="text-align:right"><div style="font-family:Courier New,monospace;font-size:18px;font-weight:800">${$M(total)}</div><div style="font-size:10px;opacity:0.75">total a pagar</div></div>
+      </div>
+      <div class="mbb">
+        <div>
+          ${mt.length?`<table><thead><tr><th>Ticket</th><th>Vehículo / Servicio</th><th style="text-align:right">Importe</th><th style="text-align:center">Llant.</th><th style="text-align:right">Com.L</th></tr></thead><tbody>${ticketRows}</tbody><tfoot><tr><td colspan="2">TOTAL</td><td class="mono" style="text-align:right">${$M(imp)}</td><td></td><td class="mono" style="text-align:right">${$M(llan)}</td></tr></tfoot></table>`:'<div style="color:#64748B;padding:8px 0;">Sin tickets esta semana</div>'}
+        </div>
+        <div>
+          <div class="cr"><span>Sueldo fijo</span><span class="mono">${$M(m.sueldo)}</span></div>
+          <div class="cr"><span>Comisión ${m.comision}%</span><span class="mono" style="color:#16A34A">${$M(com)}</span></div>
+          <div class="cr"><span>Com. llantas</span><span class="mono" style="color:#D97706">${$M(llan)}</span></div>
+          ${ext?`<div class="cr"><span>Extras</span><span class="mono" style="color:#16A34A">+${$M(ext)}</span></div>`:''}
+          <div class="cr" style="font-weight:800"><span>SUMA</span><span class="mono">${$M(suma)}</span></div>
+          ${ded?`<div class="cr"><span>Deducciones</span><span class="mono" style="color:#DC2626">-${$M(ded)}</span></div>`:''}
+          <div class="ct" style="background:${m.color}"><span>TOTAL A PAGAR</span><span class="mono">${$M(total)}</span></div>
+          <div class="firma-row" style="margin-top:16px"><div class="firma">Firma del mecánico</div><div class="firma">Sello / Vo.Bo.</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Bloques administrativos para PDF
+  const admActivos = (DB.administrativos||[]).filter(a=>a.activo);
+  const bloquesAdm = admActivos.map(a=>{
+    const aj=(DB.ajustes[semKey]||{})['adm_'+a.id]||{extras:{},deducciones:{}};
+    const ext=(+aj.extras?.horasExtras||0)+(+aj.extras?.vacaciones||0)+(+aj.extras?.otro||0);
+    const ded=(+aj.deducciones?.prestamo||0)+(+aj.deducciones?.infonavit||0)+(+aj.deducciones?.otro||0);
+    const suma=a.sueldo+ext;
+    const total=suma-ded;
+    tNomina+=total;
+    return `<div class="mb">
+      <div class="mbh" style="background:${a.color}">
+        <div><strong style="font-size:14px">${a.nombre}</strong><div style="font-size:10px;opacity:0.8">Administrativo · ${sem.label}</div></div>
+        <div style="text-align:right"><div style="font-family:Courier New,monospace;font-size:18px;font-weight:800">${$M(total)}</div><div style="font-size:10px;opacity:0.75">total a pagar</div></div>
+      </div>
+      <div class="mbb">
+        <div style="color:#64748B;padding:8px 0;font-size:12px">Personal administrativo</div>
+        <div>
+          <div class="cr"><span>Sueldo base</span><span class="mono">${$M(a.sueldo)}</span></div>
+          ${ext?`<div class="cr"><span>Extras</span><span class="mono" style="color:#16A34A">+${$M(ext)}</span></div>`:''}
+          <div class="cr" style="font-weight:800"><span>SUMA</span><span class="mono">${$M(suma)}</span></div>
+          ${ded?`<div class="cr"><span>Deducciones</span><span class="mono" style="color:#DC2626">-${$M(ded)}</span></div>`:''}
+          <div class="ct" style="background:${a.color}"><span>TOTAL A PAGAR</span><span class="mono">${$M(total)}</span></div>
+          <div class="firma-row" style="margin-top:16px"><div class="firma">Firma</div><div class="firma">Sello / Vo.Bo.</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Filas resumen administrativos
+  const resumenRowsAdm = admActivos.map(a=>{
+    const aj=(DB.ajustes[semKey]||{})['adm_'+a.id]||{extras:{},deducciones:{}};
+    const ext=(+aj.extras?.horasExtras||0)+(+aj.extras?.vacaciones||0)+(+aj.extras?.otro||0);
+    const ded=(+aj.deducciones?.prestamo||0)+(+aj.deducciones?.infonavit||0)+(+aj.deducciones?.otro||0);
+    const total=a.sueldo+ext-ded;
+    return `<tr style="background:#F8F9FA"><td style="font-weight:700;color:${a.color}">${a.nombre} <span style="font-size:10px;color:#94A3B8">(Adm)</span></td><td class="mono" style="text-align:right">—</td><td class="mono" style="text-align:right">—</td><td class="mono" style="text-align:right">—</td><td class="mono" style="text-align:right">${$M(a.sueldo)}</td><td class="mono" style="text-align:right;color:#16A34A">${ext?$M(ext):'—'}</td><td class="mono" style="text-align:right;color:#DC2626">${ded?$M(ded):'—'}</td><td class="mono" style="text-align:right;font-weight:800;font-size:13px">${$M(total)}</td></tr>`;
+  }).join('');
+
+  // Tabla resumen
+  const resumenRows = activos.map(m=>{
+    const mt=tks[m.id]||[];
+    const imp=mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan=mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com=(m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj=(DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const ext=(+aj.extras?.diasExtra||0)+(+aj.extras?.vacaciones||0)+(+aj.extras?.horasExtras||0)+(+aj.extras?.otro||0);
+    const ded=(+aj.deducciones?.prestamo||0)+(+aj.deducciones?.infonavit||0)+(+aj.deducciones?.otro||0)+(m.infonavit||0);
+    const total=m.sueldo+com+llan+ext-ded;
+    return `<tr><td style="font-weight:700">${m.nombre}</td><td class="mono" style="text-align:right">${$M(imp)}</td><td class="mono" style="text-align:right;color:#16A34A">${$M(com)}</td><td class="mono" style="text-align:right;color:#D97706">${$M(llan)}</td><td class="mono" style="text-align:right">${$M(m.sueldo)}</td><td class="mono" style="text-align:right;color:#16A34A">${ext?$M(ext):'—'}</td><td class="mono" style="text-align:right;color:#DC2626">${ded?$M(ded):'—'}</td><td class="mono" style="text-align:right;font-weight:800;font-size:13px">${$M(total)}</td></tr>`;
+  }).join('');
+
+  const html = `
+    <div class="ph">
+      <h1>MULTISERVICIOS EGURE — SIGLO XXI</h1>
+      <h2>Cálculo de Comisiones y Nómina Semanal</h2>
+      <div class="per">Semana: ${sem.label} &nbsp;·&nbsp; Generado: ${now}</div>
+    </div>
+    <div class="cards">
+      <div class="card v"><div class="cl">Venta Total</div><div class="cv">${$M(tVentas)}</div></div>
+      <div class="card r"><div class="cl">Nómina Total</div><div class="cv">${$M(tNomina)}</div></div>
+      <div class="card"><div class="cl">Comisiones 2.5%</div><div class="cv">${$M(tCom)}</div></div>
+      <div class="card m"><div class="cl">Com. Llantas</div><div class="cv">${$M(tLlan)}</div></div>
+    </div>
+    <div class="stit">Resumen General</div>
+    <table><thead><tr><th>Mecánico</th><th style="text-align:right">Ventas</th><th style="text-align:right">Com.2.5%</th><th style="text-align:right">Llantas</th><th style="text-align:right">Sueldo</th><th style="text-align:right">Extras</th><th style="text-align:right">Deduc.</th><th style="text-align:right">TOTAL</th></tr></thead>
+    <tbody>${resumenRows}${resumenRowsAdm}</tbody>
+    <tfoot><tr><td><strong>TOTALES</strong></td><td class="mono" style="text-align:right">${$M(tVentas)}</td><td class="mono" style="text-align:right">${$M(tCom)}</td><td class="mono" style="text-align:right">${$M(tLlan)}</td><td>—</td><td>—</td><td>—</td><td class="mono" style="text-align:right;font-size:13px">${$M(tNomina)}</td></tr></tfoot></table>
+    <div class="stit">Detalle por Mecánico</div>
+    ${bloques}
+    <div class="stit" style="margin-top:20px">Detalle Administrativos</div>
+    ${bloquesAdm}
+    <div class="footer"><span>Multiservicios Egure · III Anillo · ${now}</span><span>Página 1</span></div>`;
+
+  abrirVentanaPDF('Nómina Semanal — '+sem.label, html);
+}
+
+function exportarResumenPDF() { exportarNominaPDF(); }
+
+function exportarNominaExcel() {
+  const sem = getSemana(semanaOffset);
+  const semKey = sem.key;
+  const tks = DB.tickets[semKey]||{};
+  const activos = DB.mecanicos.filter(m=>m.activo);
+  const wb = XLSX.utils.book_new();
+  const now = new Date().toLocaleDateString('es-MX');
+
+  // ── Hoja 1: Resumen General ──
+  const resumenData = [
+    ['MULTISERVICIOS EGURE — SIGLO XXI'],
+    ['Cálculo de Comisiones y Nómina Semanal'],
+    ['Semana: ' + sem.label],
+    ['Generado: ' + now],
+    [],
+    ['Mecánico','Ventas','Comisión 2.5%','Com. Llantas','Sueldo Fijo','Día Extra','Horas Extras','Otros Extras','Préstamo','Casa','Otras Deduc.','TOTAL A PAGAR']
+  ];
+  let tVentas=0,tNomina=0,tCom=0,tLlan=0;
+  activos.forEach(m=>{
+    const mt=tks[m.id]||[];
+    const imp=mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan=mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com=(m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const aj=(DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const diasExtra=+aj.extras?.diasExtra||0;
+    const horasExtras=+aj.extras?.horasExtras||0;
+    const otroExtra=+aj.extras?.otro||0;
+    const prestamo=+aj.deducciones?.prestamo||0;
+    const casa=+aj.deducciones?.casa||0;
+    const otraDed=+aj.deducciones?.otro||0;
+    const total=m.sueldo+com+llan+diasExtra+horasExtras+otroExtra-prestamo-casa-otraDed;
+    tVentas+=imp; tCom+=com; tLlan+=llan; tNomina+=total;
+    resumenData.push([m.nombre,imp,com,llan,m.sueldo,diasExtra,horasExtras,otroExtra,prestamo,casa,otraDed,total]);
+  });
+  resumenData.push([]);
+  resumenData.push(['TOTALES',tVentas,tCom,tLlan,'','','','','','','',tNomina]);
+
+  const wsResumen = XLSX.utils.aoa_to_sheet(resumenData);
+  wsResumen['!cols'] = [{wch:18},{wch:14},{wch:14},{wch:14},{wch:14},{wch:10},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen Nómina');
+
+  // ── Hoja por mecánico ──
+  activos.forEach(m=>{
+    const mt=tks[m.id]||[];
+    const aj=(DB.ajustes[semKey]||{})[m.id]||{extras:{},deducciones:{}};
+    const imp=mt.reduce((s,t)=>s+(t.importe||0),0);
+    const llan=mt.reduce((s,t)=>s+(t.comLlanta||0),0);
+    const com=(m.tipo==='memo'&&parseFloat(m.comision)>=10)?(imp<=40000?imp*0.10:40000*0.10+(imp-40000)*0.08):imp*(parseFloat(m.comision)/100);
+    const diasExtra=+aj.extras?.diasExtra||0;
+    const horasExtras=+aj.extras?.horasExtras||0;
+    const otroExtra=+aj.extras?.otro||0;
+    const prestamo=+aj.deducciones?.prestamo||0;
+    const casa=+aj.deducciones?.casa||0;
+    const otraDed=+aj.deducciones?.otro||0;
+    const suma=m.sueldo+com+llan+diasExtra+horasExtras+otroExtra;
+    const total=suma-prestamo-casa-otraDed;
+
+    const filas=[
+      ['MULTISERVICIOS EGURE — CÁLCULO DE COMISIONES'],
+      ['Mecánico: '+m.nombre, '', 'Semana: '+sem.label],
+      [],
+      ['No. Ticket','No. Orden','Fecha','Vehículo / Servicio','Importe','# Llantas','Com. Llanta']
+    ];
+    mt.forEach(t=>filas.push([t.ticket||'',t.orden||'',t.fecha,((t.vehiculo||'')+' '+(t.servicio||'')).trim(),t.importe||0,t.llantas||0,t.comLlanta||0]));
+    filas.push([]);
+    filas.push(['','','','TOTAL VENTAS',imp,'',llan]);
+    filas.push([]);
+    filas.push(['','','','Comisión '+m.comision+'%',com]);
+    filas.push(['','','','Sueldo Fijo',m.sueldo]);
+    filas.push(['','','','Llantas',llan]);
+    if(diasExtra) filas.push(['','','','Día Extra',diasExtra]);
+    if(horasExtras) filas.push(['','','','Horas Extras',horasExtras]);
+    if(otroExtra) filas.push(['','','','Otro Extra',otroExtra]);
+    filas.push(['','','','SUMA',suma]);
+    if(prestamo) filas.push(['','','','Préstamo',-prestamo]);
+    if(casa) filas.push(['','','','Casa',-casa]);
+    if(otraDed) filas.push(['','','','Otras Deducciones',-otraDed]);
+    filas.push([]);
+    filas.push(['','','','TOTAL A PAGAR',total]);
+
+    const ws = XLSX.utils.aoa_to_sheet(filas);
+    ws['!cols']=[{wch:12},{wch:10},{wch:12},{wch:35},{wch:14},{wch:10},{wch:12}];
+    const nombre = m.nombre.substring(0,28);
+    XLSX.utils.book_append_sheet(wb, ws, nombre);
+  });
+
+  XLSX.writeFile(wb, 'Nomina_'+semKey+'.xlsx');
+  toast('📊 Excel descargado','ok');
+}
+
+// RESPALDO
+// ============================================================
+function descargar(){
+  const blob=new Blob([JSON.stringify({v:2,fecha:new Date().toISOString(),db:DB},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='nomina_respaldo_'+new Date().toISOString().split('T')[0]+'.json';a.click();
+  toast('💾 Respaldo descargado','ok');
+}
+function restaurarJSON(input){
+  const f=input.files[0]; if(!f){toast('Selecciona archivo','err');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d.db){toast('Archivo inválido — no es un respaldo de nómina','err');return;}
+      DB=d.db;
+      guardar();
+      renderDash();
+      renderGuardados && renderGuardados();
+      toast('✅ Datos cargados correctamente','ok');
+      // Mostrar resumen de lo que se cargó
+      const sem = Object.keys(d.db.tickets||{}).length;
+      const tks = Object.values(d.db.tickets||{}).reduce((s,m)=>s+Object.values(m).reduce((s2,a)=>s2+a.filter(t=>!t._hist).length,0),0);
+      setTimeout(()=>toast(`📊 ${tks} tickets en ${sem} semanas cargados`,'ok'),1500);
+    }catch(e2){toast('Error al leer el archivo: '+e2.message,'err');}
+  };
+  r.readAsText(f);
+}
+
+function restaurar(){
+  document.getElementById('file-resp').click();
+}
+function borrarSemana(){
+  const semKey=getSemana(semanaOffset).key;
+  delete DB.tickets[semKey]; delete DB.ajustes[semKey];
+  guardar(); renderDash(); toast('Semana borrada','ok');
+}
+function cerrarModalDet(){ document.getElementById('modal-det').classList.remove('open'); }
+
+// TOAST
+function toast(m,t=''){const e=document.getElementById('toast');e.textContent=m;e.className='toast'+(t?' '+t:'');setTimeout(()=>e.classList.add('show'),10);setTimeout(()=>e.classList.remove('show'),3500);}
+
+// Cerrar modales al click fuera
+['modal-mec','modal-det'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+init();
+</script>
+
+<!-- MODAL RESUMEN DEL DÍA -->
+<div id="modal-dia" onclick="if(event.target===this)cerrarResumenDia()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:99999;overflow-y:auto;padding:20px 0;">
+  <div style="background:#fff;margin:30px auto;max-width:700px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;">
+    <div style="background:#1B3A6B;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:17px;font-weight:800;">📊 Resumen del Día</div>
+        <div id="modal-dia-fecha" style="font-size:12px;opacity:0.8;margin-top:2px;"></div>
+      </div>
+      <button onclick="cerrarResumenDia()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;font-weight:700;">✕</button>
+    </div>
+    <!-- Selector de fecha -->
+    <div style="padding:16px 24px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;gap:12px;">
+      <label style="font-weight:600;font-size:13px;">Ver día:</label>
+      <input type="date" id="modal-dia-picker" onchange="cargarResumenDia(this.value)"
+        style="padding:6px 12px;border:1px solid #CBD5E1;border-radius:7px;font-size:13px;font-weight:600;">
+      <span style="font-size:12px;color:#64748B;">Selecciona cualquier día de la semana activa</span>
+    </div>
+    <!-- Cards resumen -->
+    <div id="modal-dia-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px;"></div>
+    <!-- Tabla detalle -->
+    <div style="padding:0 24px 24px;">
+      <div id="modal-dia-tabla"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>const DATOS_BASE={"tickets":{"2024-12-30":{"memo":[{"id":"hist_memo_2024-12-30","fecha":"2024-12-30","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":44000,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2024-12-30","fecha":"2024-12-30","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":8500,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2024-12-30","fecha":"2024-12-30","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":23000,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2024-12-30","fecha":"2024-12-30","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":6550,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2024-12-30","fecha":"2024-12-30","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}]},"2026-01-05":{"memo":[{"id":"hist_memo_2026-01-05","fecha":"2026-01-05","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":37000,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2026-01-05","fecha":"2026-01-05","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":12958.4,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-01-05","fecha":"2026-01-05","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":675,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2026-01-05","fecha":"2026-01-05","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":9207.1,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2026-01-05","fecha":"2026-01-05","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":6400,"comLlanta":0,"_hist":true}],"manny":[{"id":"hist_manny_2026-01-05","fecha":"2026-01-05","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"neto":[{"id":"hist_neto_2026-01-05","fecha":"2026-01-05","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana importada del acumulado","importe":675.5,"comLlanta":0,"_hist":true}]},"2026-01-12":{"memo":[{"id":"hist_memo_2026-01-12","fecha":"2026-01-12","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":41620,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2026-01-12","fecha":"2026-01-12","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":9670,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-01-12","fecha":"2026-01-12","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2026-01-12","fecha":"2026-01-12","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":12982.2,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2026-01-12","fecha":"2026-01-12","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":7000,"comLlanta":0,"_hist":true}],"manny":[{"id":"hist_manny_2026-01-12","fecha":"2026-01-12","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":5837.9,"comLlanta":0,"_hist":true}],"neto":[{"id":"hist_neto_2026-01-12","fecha":"2026-01-12","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana importada del acumulado","importe":0,"comLlanta":0,"_hist":true}]},"2026-01-19":{"memo":[{"id":"hist_memo_2026-01-19","fecha":"2026-01-19","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":32500,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2026-01-19","fecha":"2026-01-19","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":8220,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-01-19","fecha":"2026-01-19","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2026-01-19","fecha":"2026-01-19","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":7030,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2026-01-19","fecha":"2026-01-19","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":3800,"comLlanta":0,"_hist":true}],"manny":[{"id":"hist_manny_2026-01-19","fecha":"2026-01-19","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":8380,"comLlanta":0,"_hist":true}],"neto":[{"id":"hist_neto_2026-01-19","fecha":"2026-01-19","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana importada del acumulado","importe":0,"comLlanta":0,"_hist":true}]},"2026-01-26":{"memo":[{"id":"hist_memo_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":53000,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":7169.9,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":5528.2,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":11393.1,"comLlanta":0,"_hist":true}],"manny":[{"id":"hist_manny_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":6295.6,"comLlanta":0,"_hist":true}],"ivan":[{"id":"hist_ivan_2026-01-26","fecha":"2026-01-26","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":8342.6,"comLlanta":0,"_hist":true}],"neto":[{"id":"hist_neto_2026-01-26","fecha":"2026-01-26","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana importada del acumulado","importe":0,"comLlanta":0,"_hist":true}]},"2026-02-02":{"memo":[{"id":"hist_memo_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":11170,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":16930,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":5420,"comLlanta":0,"_hist":true}],"manny":[{"id":"hist_manny_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":6050,"comLlanta":0,"_hist":true}],"ivan":[{"id":"hist_ivan_2026-02-02","fecha":"2026-02-02","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":9700,"comLlanta":0,"_hist":true}],"neto":[{"id":"hist_neto_2026-02-02","fecha":"2026-02-02","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana importada del acumulado","importe":2080,"comLlanta":0,"_hist":true}]},"2026-02-09":{"memo":[{"id":"hist_memo_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"mauricio":[{"id":"hist_mauricio_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":10052.5,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":0,"comLlanta":0,"_hist":true}],"pedro":[{"id":"hist_pedro_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":5725.5,"comLlanta":0,"_hist":true}],"sergio":[{"id":"hist_sergio_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":14890.6,"comLlanta":0,"_hist":true}],"manny":[{"id":"hist_manny_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":6238.9,"comLlanta":0,"_hist":true}],"ivan":[{"id":"hist_ivan_2026-02-09","fecha":"2026-02-09","vehiculo":"HISTÓRICO","servicio":"Semana importada","importe":10033,"comLlanta":0,"_hist":true}],"neto":[{"id":"hist_neto_2026-02-09","fecha":"2026-02-09","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana importada del acumulado","importe":0,"comLlanta":0,"_hist":true}]},"2026-02-23":{"pedro":[{"id":"hist_pedro_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":7629.5,"comLlanta":50,"_hist":true},{"ticket":"1047","orden":"593","vehiculo":"VERSA/AMORTIGUADORES","servicio":"","importe":3050.2,"llantas":0,"comLlanta":0,"fecha":"2026-02-25"},{"ticket":"1051","orden":"594","vehiculo":"FLUENCE/AFINACION","servicio":"","importe":3135,"llantas":0,"comLlanta":0,"fecha":"2026-02-26"},{"ticket":"1060","orden":"595","vehiculo":"MAZDA/DIAGNOSTICO","servicio":"","importe":220,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"}],"mauricio":[{"id":"hist_mauricio_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":2264.1,"comLlanta":150,"_hist":true},{"ticket":"1049","orden":"2928","vehiculo":"MARCH/SOPORTES/BALATAS","servicio":"","importe":9466.48,"llantas":0,"comLlanta":0,"fecha":"2026-02-25"},{"ticket":"1058","orden":"1371","vehiculo":"CORSA/SOPORTES","servicio":"","importe":2226.62,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"}],"sergio":[{"ticket":"1046","orden":"2935","vehiculo":"CARIBE/AMORTIGUADORES","servicio":"","importe":3900,"llantas":0,"comLlanta":0,"fecha":"2026-02-24"},{"ticket":"1050","orden":"582","vehiculo":"SENTRA/BALATAS","servicio":"","importe":1620,"llantas":0,"comLlanta":0,"fecha":"2026-02-25"},{"ticket":"1052","orden":"583","vehiculo":"VERSA/AMORTIGUADORES/TORNILLOS","servicio":"","importe":6222.27,"llantas":2,"comLlanta":50,"fecha":"2026-02-26"},{"ticket":"1055","orden":"14","vehiculo":"BMW/BRAZOS","servicio":"","importe":13000,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"},{"ticket":"1057","orden":"16","vehiculo":"COLORADO/ALINEACION","servicio":"","importe":340,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"},{"ticket":"1062","orden":"585","vehiculo":"HYUNDAI/LLANTAS","servicio":"","importe":0,"llantas":4,"comLlanta":100,"fecha":"2026-02-27"},{"ticket":"1031","orden":"2931","vehiculo":"KICKS/LLANTAS","servicio":"","importe":0,"llantas":2,"comLlanta":50,"fecha":"2026-02-21"},{"ticket":"1040","orden":"2932","vehiculo":"LEON HORQUILLA/ROTULA","servicio":"","importe":3496.15,"llantas":0,"comLlanta":0,"fecha":"2026-02-23"},{"ticket":"1034","orden":"2933","vehiculo":"RANGER/ALINEACION","servicio":"","importe":340,"llantas":0,"comLlanta":0,"fecha":"2026-02-23"}],"manny":[{"id":"hist_manny_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":27193.6,"comLlanta":0,"_hist":true},{"ticket":"1048","orden":"579","vehiculo":"SPARK/BALATAS","servicio":"","importe":1650.04,"llantas":0,"comLlanta":0,"fecha":"2026-02-25"},{"ticket":"1054","orden":"584","vehiculo":"CORDOBA/AMORTIGUADORES-TORNILLOS","servicio":"","importe":3896.85,"llantas":0,"comLlanta":0,"fecha":"2026-02-26"}],"ivan":[{"id":"hist_ivan_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":7071,"comLlanta":100,"_hist":true},{"ticket":"1053","orden":"581","vehiculo":"ALTIMA/CREMALLERA","servicio":"","importe":2099.92,"llantas":0,"comLlanta":0,"fecha":"2026-02-26"},{"ticket":"1056","orden":"15","vehiculo":"VERSA/DIAGNOSTICO","servicio":"","importe":220,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"},{"ticket":"1061","orden":"2936","vehiculo":"URVAN/LLANTAS","servicio":"","importe":0,"llantas":2,"comLlanta":50,"fecha":"2026-02-27"}],"mario":[{"id":"hist_mario_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":9958.8,"comLlanta":0,"_hist":true}],"juan":[{"id":"hist_juan_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":340,"comLlanta":0,"_hist":true}],"memo":[{"id":"hist_memo_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":7140,"comLlanta":0,"_hist":true},{"ticket":"316","orden":"","vehiculo":"JETTA/LLANTAS","servicio":"","importe":0,"llantas":4,"comLlanta":120,"fecha":"2026-02-26"},{"ticket":"322","orden":"","vehiculo":"SISTEMA ENFRIAMIENTO","servicio":"","importe":4550,"llantas":0,"comLlanta":0,"fecha":"2026-02-26"},{"ticket":"319","orden":"","vehiculo":"ECOSPORT/SOPORTE/HORQUILLAS","servicio":"","importe":5780.21,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"},{"ticket":"320","orden":"","vehiculo":"SENTRA/HORQUILLAS","servicio":"","importe":2300,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"},{"ticket":"321","orden":"","vehiculo":"MATIZ/HORQUILLAS/BASES","servicio":"","importe":1900.02,"llantas":0,"comLlanta":0,"fecha":"2026-02-27"}],"neto":[{"id":"hist_neto_2026-02-23","fecha":"2026-02-23","orden":"","vehiculo":"HISTÓRICO","servicio":"Semana 21-27 feb importada","importe":0,"comLlanta":0,"_hist":true}]},"2026-02-28":{"manny":[{"ticket":"1063","orden":"586","vehiculo":"ALTEA","servicio":"","importe":440.01,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1067","orden":"587","vehiculo":"YARIS","servicio":"","importe":3135,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1070","orden":"588","vehiculo":"ATTITUDE","servicio":"","importe":340,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1080","orden":"589","vehiculo":"OPTIMA","servicio":"BALATAS","importe":1650,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-02"},{"ticket":"1085","orden":"590","vehiculo":"SENTRA ","servicio":"LLANTAS","importe":2045.37,"tipo":"llantas","llantas":2,"comLlanta":50,"fecha":"2026-03-03"},{"ticket":"1085","orden":"590","vehiculo":"SENTRA","servicio":"HORQUILLA, MASA, EXTENSIONES","importe":4965.58,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-03"},{"ticket":"1087","orden":"591","vehiculo":"SENTRA","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-04"},{"ticket":"108","orden":"592","vehiculo":"SANDERO","servicio":"LLANTAS","importe":4460.01,"tipo":"llantas","llantas":4,"comLlanta":100,"fecha":"2026-03-04"},{"ticket":"109","orden":"0027","vehiculo":"TIIDA","servicio":"LLANTAS","importe":4400.023,"tipo":"llantas","llantas":4,"comLlanta":100,"fecha":"2026-03-04"},{"ticket":"110","orden":"0080","vehiculo":"CHALLENGER","servicio":"AFINACION","importe":3420.05,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"},{"ticket":"1102","orden":"0082","vehiculo":"SENTRA","servicio":"AMORTIGUADORES","importe":1927.89,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-06"},{"ticket":"1104","orden":"0083","vehiculo":"BEETLE","servicio":"CAMBIO DE ACEITE","importe":850,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-06"}],"ivan":[{"ticket":"1064","orden":"580","vehiculo":"SORENTO","servicio":"","importe":4818.48,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1076","orden":"2947","vehiculo":"CAPTURE","servicio":"","importe":5820.01,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1078","orden":"","vehiculo":"ACCORD","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-02"},{"ticket":"1081","orden":"0015","vehiculo":"VERSA","servicio":"HORQUILLAS","importe":2920.03,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-02"},{"ticket":"1084","orden":"0019","vehiculo":"SENTRA","servicio":"BUJE, AMORTIGUADORES, HORQUILLAS","importe":9545.76,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-03"},{"ticket":"1089","orden":"0020","vehiculo":"RAV4","servicio":"AMORTIGUADORES TRASEROS","importe":2048.93,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-04"},{"ticket":"1092","orden":"2921","vehiculo":"CHALLENGER","servicio":"BOMBA DIRECCION","importe":18200,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-04"},{"ticket":"1095","orden":"0043","vehiculo":"TS II","servicio":"ALINEACION","importe":340,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"},{"ticket":"1097","orden":"0030","vehiculo":"GOLF","servicio":"BALERO, JUNTA HOMOCINETICA","importe":4079.44,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"},{"ticket":"1105","orden":"0044","vehiculo":"RAV-4","servicio":"BUJE, AFINACION, RECTIFICADOS","importe":5029.98,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-06"}],"mauricio":[{"ticket":"1065","orden":"1372","vehiculo":"COROLLA","servicio":"","importe":4320.07,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1073","orden":"1374","vehiculo":"CIVIC","servicio":"","importe":220,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1075","orden":"1373","vehiculo":"KIA OPTIMA","servicio":"","importe":2850,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1079","orden":"1375","vehiculo":"JETTA","servicio":"AMORTIGUADORES, HORQUILLAS","importe":5345.08,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-02"},{"ticket":"1082","orden":"1377","vehiculo":"TIIDA","servicio":"LLANTAS","importe":3576.72,"tipo":"llantas","llantas":4,"comLlanta":100,"fecha":"2026-03-03"},{"ticket":"1082","orden":"1377","vehiculo":"TIIDA","servicio":"RECTIFICADOS","importe":622.47,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-03"},{"ticket":"1083","orden":"1376","vehiculo":"V-DRIVE","servicio":"SOPORTES, HORQUILLAS","importe":5655.85,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-03"},{"ticket":"1090","orden":"1378","vehiculo":"SENTRA","servicio":"SOPORTES, BASES, AMORTIGUADORES","importe":6161.94,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-04"},{"ticket":"1096","orden":"1379","vehiculo":"PARTNER","servicio":"TERMINAL, CREMALLERA","importe":6729.26,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"},{"ticket":"1099","orden":"1380","vehiculo":"CRV","servicio":"BASES, AMORTIGUADORES","importe":8084.75,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"},{"ticket":"1101","orden":"1381","vehiculo":"NP300","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"}],"sergio":[{"ticket":"1066","orden":"0021","vehiculo":"VERSA","servicio":"","importe":1520.04,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1068","orden":"0022","vehiculo":"AVEO","servicio":"","importe":440,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1072","orden":"0024","vehiculo":"JETTA","servicio":"","importe":430,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1077","orden":"0025","vehiculo":"CIVIC","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-02"},{"ticket":"1086","orden":"0026","vehiculo":"MAZDA 6","servicio":"AMORTIGUADORES, TORNILLOS","importe":8489.91,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-03"},{"ticket":"1093","orden":"0029","vehiculo":"ECOSPORT","servicio":"SOPORTES, ROTULAS","importe":6600.14,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-04"},{"ticket":"1098","orden":"0031","vehiculo":"LANCER","servicio":"SOPORTE, AMORTIGUADORES","importe":5300.22,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-05"},{"ticket":"1103","orden":"0084","vehiculo":"NISSAN 98","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-06"}],"pedro":[{"ticket":"1069","orden":"0023","vehiculo":"BEAT","servicio":"","importe":220,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1074","orden":"596","vehiculo":"TSURU","servicio":"","importe":4295.02,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"},{"ticket":"1071","orden":"","vehiculo":"KOLEOS","servicio":"","importe":3700.01,"llantas":0,"comLlanta":0,"fecha":"2026-02-28"}],"_refacciones":[{"ticket":"1094","orden":"0081","vehiculo":"SELTOS","servicio":"CAMBIO DE ACEITE","importe":899,"tipo":"refaccion","llantas":0,"comLlanta":0,"fecha":"2026-03-05"}]},"2026-03-07":{"mauricio":[{"ticket":"1109","orden":"1400","vehiculo":"EXPLORER","servicio":"DIAGNOSTICO, CREMALLERA","importe":2350,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1110","orden":"0096","vehiculo":"VERSA","servicio":"CAMBIO DE ACEITE","importe":895.04,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1138","orden":"1382","vehiculo":"RAV-4","servicio":"CREMALLERA","importe":7000.18,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1144","orden":"","vehiculo":"CHEVY","servicio":"AMORTIGUADORES, BASES, ROTULAS","importe":4677.76,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"}],"sergio":[{"ticket":"1114","orden":"0032","vehiculo":"CIVIC","servicio":"TORNILLOS, HORQUILLAS","importe":3973.69,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1121","orden":"","vehiculo":"MAZDA 6","servicio":"TORNILLOS","importe":343.58,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-09"},{"ticket":"1125","orden":"0037","vehiculo":"INFINITY","servicio":"INSTALACION BANDA, BALATAS","importe":4136.36,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1126","orden":"0038","vehiculo":"LIBERTY","servicio":"ROTULA","importe":1010.01,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1127","orden":"3202","vehiculo":"QUEST","servicio":"AMORTIGUADORES TRASEROS","importe":1720.07,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1139","orden":"0039","vehiculo":"KIA FORTE","servicio":"AMORTIGUADORES, SOPORTES, BASES, TORNILLOS","importe":19424.36,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1142","orden":"0040","vehiculo":"RAV4","servicio":"TORNILLO, AMORTIGUADORES","importe":6171.28,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"63","orden":"","vehiculo":"JOURNEY","servicio":"ROTACION","importe":120,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"},{"ticket":"1145","orden":"","vehiculo":"LOGAN","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"}],"manny":[{"ticket":"1107","orden":"0086","vehiculo":"SPARK","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1108","orden":"0085","vehiculo":"CIVIC","servicio":"BALATAS","importe":1600,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1111","orden":"0087","vehiculo":"EQUINOX","servicio":"AMORTIGUADOR","importe":1690.02,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1116","orden":"0088","vehiculo":"VERSA","servicio":"AFINACION MENOR","importe":1800.01,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-09"},{"ticket":"1129","orden":"0090","vehiculo":"FLEX","servicio":"AFINACION MAYOR","importe":3200.09,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1135","orden":"0004","vehiculo":"SPARK","servicio":"AMORTIGUADORES, HORQUILLAS, BASES","importe":6350.12,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1140","orden":"0092","vehiculo":"CIVIC","servicio":"AMORTIGUADORES","importe":3416.85,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1130","orden":"","vehiculo":"SONIC","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"},{"ticket":"1143","orden":"","vehiculo":"ALTIMA","servicio":"CREMALLERA","importe":1900,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"},{"ticket":"1146","orden":"","vehiculo":"FIT","servicio":"ALINEACION Y BALANCEO","importe":425,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"}],"ivan":[{"ticket":"1106","orden":"0045","vehiculo":"F150","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1112","orden":"0033","vehiculo":"FIESTA","servicio":"AMORTIGUADORES, BASES","importe":5037.92,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1113","orden":"0048","vehiculo":"MARCH","servicio":"AFINACION","importe":2850.12,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-07"},{"ticket":"1117","orden":"0035","vehiculo":"TRACKER","servicio":"LLANTAS","importe":3960.75,"tipo":"llantas","llantas":2,"comLlanta":50,"fecha":"2026-03-09"},{"ticket":"1118","orden":"0034","vehiculo":"CAPTIVA","servicio":"TERMINAL DIRECCION, CAMBIO ACEITE","importe":2622.44,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-09"},{"ticket":"1120","orden":"0047","vehiculo":"IBIZA","servicio":"SOPORTES, TERMINALES, BASES, AMORTIGUADORES","importe":10856.41,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-09"},{"ticket":"1122","orden":"9989","vehiculo":"CHARGER","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1123","orden":"0049","vehiculo":"JELLY","servicio":"LLANTAS","importe":1780.01,"tipo":"llantas","llantas":1,"comLlanta":25,"fecha":"2026-03-10"},{"ticket":"1124","orden":"0003","vehiculo":"IBIZA","servicio":"RESORTE, CAMBIO ACEITE","importe":3761,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1136","orden":"0097","vehiculo":"NISSAN","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1137","orden":"3216","vehiculo":"KIA RIO","servicio":"SOPORTES","importe":4450.02,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1141","orden":"3204","vehiculo":"ALTIMA","servicio":"MANGUERA DIRECCION","importe":3499.93,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-12"},{"ticket":"1131","orden":"","vehiculo":"FUSION","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"},{"ticket":"1133","orden":"","vehiculo":"","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"},{"ticket":"1134","orden":"","vehiculo":"SWIFT","servicio":"AFINACION MAYOR","importe":3100,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"}],"memo":[{"ticket":"1115","orden":"0001","vehiculo":"PLATINA","servicio":"LLANTAS, TORNILLOS, TERMINALES","importe":3342.03,"tipo":"servicio","llantas":4,"comLlanta":100,"fecha":"2026-03-09"},{"ticket":"1119","orden":"0002","vehiculo":"KICKS","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-09"},{"ticket":"1115b","orden":"0001","vehiculo":"PLATINA","servicio":"TORNILLOS, TERMINALES","importe":1508.17,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-09"},{"ticket":"1128","orden":"3202","vehiculo":"FOCUS","servicio":"CREMALLERA","importe":32875,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-10"},{"ticket":"1132","orden":"","vehiculo":"AVEO","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-13"}]},"2026-03-14":{"ivan":[{"ticket":"1148","orden":"3219","vehiculo":"GOL","servicio":"TERMINALES, AMORTIGUADORES, BASES, HORQUILLAS","importe":12731.17,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"1150","orden":"0050","vehiculo":"CADDY","servicio":"BALATAS","importe":2900,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"1151","orden":"3223","vehiculo":"SENTRA","servicio":"LLANTAS","importe":5237.4,"tipo":"servicio","llantas":3,"comLlanta":75,"fecha":"2026-03-14"},{"ticket":"1151","orden":"3223","vehiculo":"SENTRA","servicio":"AMORTIGUADORES","importe":2763,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"}],"manny":[{"ticket":"SX-0003","orden":"3225","vehiculo":"JETTA","servicio":"BALERO MASA,","importe":1212,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"SX-0004","orden":"3226","vehiculo":"MALIBU","servicio":"AMORTIGUADORES TRASEROS","importe":1936,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"1147","orden":"0095","vehiculo":"LOGAN","servicio":"HORQUILLAS","importe":2034,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"1149","orden":"3224","vehiculo":"SENTRA","servicio":"AFINACION MENOR","importe":2000,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"}],"mauricio":[{"ticket":"SX-0001","orden":"3208","vehiculo":"GOL","servicio":"DIAGNOSTICO","importe":220,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"SX-005","orden":"3207","vehiculo":"VERSA","servicio":"AMORTIGUADORES, TORNILLOS, BALATAS","importe":9100,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"},{"ticket":"SX-007","orden":"3210","vehiculo":"F150","servicio":"CREMALLERA","importe":6562,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-16"}],"sergio":[{"ticket":"SX-0002","orden":"0042","vehiculo":"MALIBU","servicio":"BALATAS","importe":4401,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-14"}],"memo":[{"ticket":"SX-0006","orden":"0051","vehiculo":"TIGUAN","servicio":"TORNILLOS ESTABILIZADORES","importe":1230,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-16"},{"ticket":"SX-0009","orden":"3252","vehiculo":"GOL","servicio":"AMORTIGUADORES, TORNILLOS, GOMAS","importe":4590,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-16"},{"ticket":"SX-0008","orden":"0101","vehiculo":"BEETLE","servicio":"HORQUILLAS, EXTENSIONES","importe":4550,"tipo":"servicio","llantas":0,"comLlanta":0,"fecha":"2026-03-16"}]}},"ajustes":{"2024-12-30":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":1000,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4400,"_nomina_base":0},"mauricio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4100,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":6300,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3905,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":700,"_nomina_base":700}},"2026-01-05":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3700,"_nomina_base":0},"mauricio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":409,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4136.84,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4067.5,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4170.71,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3640,"_nomina_base":3000},"manny":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":1512.6,"_nomina_base":1512.6},"adm_elizabeth":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000}},"2026-01-12":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":50,"otro":0},"deducciones":{"prestamo":1000,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4162,"_nomina_base":0},"mauricio":{"extras":{"horasExtras":100,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4317,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4000,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4548.22,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3700,"_nomina_base":3000},"manny":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3833.79,"_nomina_base":3250},"adm_elizabeth":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000}},"2026-01-19":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":1000,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3250,"_nomina_base":0},"mauricio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":409,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3663,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4000,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":464,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3489,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3380,"_nomina_base":3000},"manny":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4088,"_nomina_base":3250},"adm_elizabeth":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000}},"2026-01-26":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":200,"otro":0},"deducciones":{"prestamo":500,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":5300,"_nomina_base":0},"mauricio":{"extras":{"horasExtras":100,"otro":0},"deducciones":{"prestamo":409,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3657.99,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4000,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3802.82,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":100,"otro":0},"deducciones":{"prestamo":500,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3739.3099999999995,"_nomina_base":3000},"manny":{"extras":{"horasExtras":50,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3929.56,"_nomina_base":3250},"ivan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4084.26,"_nomina_base":3250},"adm_elizabeth":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4130}},"2026-02-02":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":635,"otro":0},"deducciones":{"prestamo":500,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3250,"_nomina_base":3250},"mauricio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4367,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4000,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":635,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":5578,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":635,"otro":0},"deducciones":{"prestamo":500,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3677,"_nomina_base":3000},"manny":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3855,"_nomina_base":3250},"ivan":{"extras":{"horasExtras":635,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4855,"_nomina_base":3250},"adm_elizabeth":{"extras":{"horasExtras":635,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000}},"2026-02-09":{"adm_lilian":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000},"neto":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":500,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":3250},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4912,"_nomina_base":4912},"mauricio":{"extras":{"horasExtras":150,"otro":0},"deducciones":{"prestamo":409,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3996.25,"_nomina_base":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4000,"_nomina_base":4000},"pedro":{"extras":{"horasExtras":50,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3872.55,"_nomina_base":3250},"sergio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4489.0599999999995,"_nomina_base":3000},"manny":{"extras":{"horasExtras":150,"otro":0},"deducciones":{"prestamo":200,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":3823.89,"_nomina_base":3250},"ivan":{"extras":{"horasExtras":150,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_total_override":4403.3,"_nomina_base":3250},"adm_elizabeth":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico","_sueldo_override":4000}},"2026-02-23":{"pedro":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":200,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3250},"mauricio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":250,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3250},"sergio":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":1000,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3000},"manny":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":200,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3250},"ivan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":300,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3250},"mario":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3250},"juan":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":4000},"memo":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":0,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":0},"neto":{"extras":{"horasExtras":0,"otro":0},"deducciones":{"prestamo":500,"infonavit":0,"otro":0},"notas":"Histórico sem 21-27 feb","_sueldo_base_hist":3250},"ernesto":{"extras":{},"deducciones":{"prestamo":500}}},"2026-02-28":{"pedro":{"extras":{},"deducciones":{"otro":3250}},"sergio":{"extras":{},"deducciones":{"prestamo":500}},"manny":{"extras":{},"deducciones":{"prestamo":200}},"ernesto":{"extras":{},"deducciones":{"prestamo":500}},"adm_juan_adm":{"extras":{"otro":22.48,"horasExtras":0},"deducciones":{}},"mario":{"extras":{},"deducciones":{"otro":3250}}},"2026-03-07":{"mauricio":{"extras":{},"deducciones":{"prestamo":409,"infonavit":0,"otro":1145.12}},"sergio":{"extras":{},"deducciones":{"prestamo":1500,"infonavit":0,"otro":0}},"manny":{"extras":{},"deducciones":{"prestamo":200,"infonavit":0,"otro":0}},"ivan":{"extras":{},"deducciones":{"prestamo":0,"infonavit":0,"otro":0}},"memo":{"extras":{},"deducciones":{"prestamo":0,"infonavit":0,"otro":0}},"ernesto":{"extras":{},"deducciones":{"prestamo":0,"infonavit":0,"otro":200}},"adm_juan_adm":{"extras":{"otro":100,"horasExtras":0},"deducciones":{}}}},"mecanicos":[{"id":"pedro","nombre":"PEDRO","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":false,"color":"#1B3A6B","tipo":"mecanico","infonavit":0},{"id":"mauricio","nombre":"MAURICIO","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":true,"color":"#16A34A","tipo":"mecanico","infonavit":409},{"id":"sergio","nombre":"SERGIO","sueldo":3000,"comision":2.5,"comLlanta":25,"activo":true,"color":"#DC2626","tipo":"mecanico","infonavit":0},{"id":"manny","nombre":"EMMANUEL","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":true,"color":"#D97706","tipo":"mecanico","infonavit":0},{"id":"ivan","nombre":"IVAN","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":true,"color":"#7C3AED","tipo":"mecanico","infonavit":0},{"id":"mario","nombre":"MARIO","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":false,"color":"#0891B2","tipo":"mecanico","infonavit":0},{"id":"ernesto","nombre":"ERNESTO","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":true,"color":"#B45309","tipo":"mecanico","infonavit":0},{"id":"memo","nombre":"MEMO","sueldo":3250,"comision":2.5,"comLlanta":25,"activo":true,"color":"#7C3AED","tipo":"memo","infonavit":0}],"administrativos":[{"id":"lilian","nombre":"LILIAN","sueldo":4000,"activo":true,"color":"#BE185D"},{"id":"juan_adm","nombre":"JUAN","sueldo":4000,"activo":true,"color":"#1D4ED8"},{"id":"elizabeth","nombre":"ELIZABETH","sueldo":4000,"activo":true,"color":"#7C3AED"}]}
