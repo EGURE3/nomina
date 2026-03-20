@@ -646,16 +646,7 @@ async function cargar(){
     _dbCargada = true;
     if(sg) sg.textContent = '✅ Conectado · Supabase';
 
-    // Ir a la última semana con tickets automáticamente
-    const semanas = Object.keys(DB.tickets).filter(k=>{
-      return Object.values(DB.tickets[k]).some(a=>Array.isArray(a)&&a.some(t=>!t._hist));
-    }).sort();
-    if(semanas.length > 0){
-      const ultimaSem = semanas[semanas.length-1];
-      const semActual = getSemana(0).key;
-      const diff = Math.round((new Date(ultimaSem+'T12:00:00') - new Date(semActual+'T12:00:00'))/(7*24*3600*1000));
-      semanaOffset = diff;
-    }
+    // offset se calcula en init() después de que getSemana esté disponible
   }catch(e){
     console.error('Error cargando Supabase:', e);
     if(sg) sg.textContent = '❌ Error conexión';
@@ -752,16 +743,26 @@ async function init(){
   document.getElementById('cap-fecha').valueAsDate = new Date();
   try{
     await cargar();
+    // Ir a la última semana con tickets
+    const semanas = Object.keys(DB.tickets).filter(k=>{
+      return Object.values(DB.tickets[k]).some(a=>Array.isArray(a)&&a.some(t=>!t._hist));
+    }).sort();
+    if(semanas.length > 0){
+      const ultimaSem = semanas[semanas.length-1];
+      const semActual = getSemana(0).key;
+      const diff = Math.round((new Date(ultimaSem+'T12:00:00') - new Date(semActual+'T12:00:00'))/(7*24*3600*1000));
+      semanaOffset = diff;
+    }
     actualizarChipSemana();
     poblarSelectMecanicos();
     iniciarFilas();
     renderDash();
   }catch(e){
     console.error('Error en init:', e);
-    actualizarChipSemana();
-    poblarSelectMecanicos();
-    iniciarFilas();
-    renderDash();
+    try{ actualizarChipSemana(); }catch(e2){}
+    try{ poblarSelectMecanicos(); }catch(e2){}
+    try{ iniciarFilas(); }catch(e2){}
+    try{ renderDash(); }catch(e2){}
   }
 }
 
