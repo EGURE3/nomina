@@ -677,27 +677,36 @@ function irA(pg,el){
 // ============================================================
 // GOOGLE APPS SCRIPT — GUARDADO AUTOMÁTICO EN GOOGLE DRIVE
 // ============================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyAUuDOK_Ne1orqdh9W34BX8ZA9rnjpsKKaQtwYhI0IE9qpLKOesMC2RYcNWbByB5UU4A/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyiXLy4VgrMgh2Lk0pQOoR9jKqBh92wfZXmCgJUb72CgGHNXqRqs4pQsLdzWLegfY5R/exec';
 
 async function gasGuardar(data) {
   try {
-    const res = await fetch(GAS_URL, {
+    // Usar no-cors para evitar problemas de CORS
+    await fetch(GAS_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify(data),
       headers: {'Content-Type': 'text/plain'}
     });
-    const j = await res.json();
-    return j.ok === true;
+    return true;
   } catch(e) { console.error('gasGuardar:', e); return false; }
 }
 
-async function gasCargar() {
-  try {
-    const res = await fetch(GAS_URL + '?t=' + Date.now());
-    const text = await res.text();
-    if(!text || text === '{}' || text === '') return null;
-    return JSON.parse(text);
-  } catch(e) { console.error('gasCargar:', e); return null; }
+function gasCargar() {
+  // Usar JSONP para evitar CORS en GET
+  return new Promise((resolve) => {
+    const callbackName = 'gasCallback_' + Date.now();
+    const script = document.createElement('script');
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      document.head.removeChild(script);
+      resolve(data && data.db ? data : null);
+    };
+    script.onerror = () => { delete window[callbackName]; resolve(null); };
+    script.src = GAS_URL + '?callback=' + callbackName + '&t=' + Date.now();
+    document.head.appendChild(script);
+    setTimeout(() => { if(window[callbackName]){ delete window[callbackName]; resolve(null); }}, 10000);
+  });
 }
 // ============================================================
 
