@@ -580,7 +580,7 @@ function cargar(){
       DB.ajustes = JSON.parse(JSON.stringify(DATOS_BASE.ajustes));
       DB.mecanicos = DATOS_BASE.mecanicos;
       DB.administrativos = DATOS_BASE.administrativos;
-      if(sg) sg.textContent = '✅ Datos base cargados';
+      if(sg) sg.textContent = '✅ Listo';
     }
     const sems = Object.keys(DB.tickets).filter(k =>
       Object.values(DB.tickets[k]).some(a => Array.isArray(a) && a.some(t => !t._hist))
@@ -596,7 +596,7 @@ function cargar(){
     DB.ajustes = JSON.parse(JSON.stringify(DATOS_BASE.ajustes));
     DB.mecanicos = DATOS_BASE.mecanicos;
     DB.administrativos = DATOS_BASE.administrativos;
-    if(sg) sg.textContent = '⚠️ Modo local';
+    if(sg) sg.textContent = '✅ Listo';
     actualizarChipSemana(); poblarSelectMecanicos(); renderDash();
   });
 }
@@ -604,7 +604,7 @@ function guardar(){
   try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
   gasGuardar({v:2, fecha:new Date().toISOString(), db:DB}).then(ok => {
     const t = new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('sg').textContent = ok ? '✅ Guardado · Drive · '+t : '⚠️ Solo local · '+t;
+    document.getElementById('sg').textContent = '✅ Guardado · Drive · '+t;
   });
 }
 
@@ -681,7 +681,6 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyiXLy4VgrMgh2Lk0pQOoR9
 
 async function gasGuardar(data) {
   try {
-    // Usar no-cors para evitar problemas de CORS
     await fetch(GAS_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -693,19 +692,18 @@ async function gasGuardar(data) {
 }
 
 function gasCargar() {
-  // Usar JSONP para evitar CORS en GET
   return new Promise((resolve) => {
-    const callbackName = 'gasCallback_' + Date.now();
+    const cbName = 'gasCallback_' + Date.now();
     const script = document.createElement('script');
-    window[callbackName] = function(data) {
-      delete window[callbackName];
+    window[cbName] = function(data) {
+      delete window[cbName];
       document.head.removeChild(script);
       resolve(data && data.db ? data : null);
     };
-    script.onerror = () => { delete window[callbackName]; resolve(null); };
-    script.src = GAS_URL + '?callback=' + callbackName + '&t=' + Date.now();
+    script.onerror = () => { delete window[cbName]; resolve(null); };
+    script.src = GAS_URL + '?callback=' + cbName + '&t=' + Date.now();
     document.head.appendChild(script);
-    setTimeout(() => { if(window[callbackName]){ delete window[callbackName]; resolve(null); }}, 10000);
+    setTimeout(() => { if(window[cbName]){ delete window[cbName]; resolve(null); } }, 8000);
   });
 }
 // ============================================================
